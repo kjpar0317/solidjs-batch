@@ -1,4 +1,0 @@
-security:
-  jjwt:
-    secret: pdfaf!rser@dfasdf#$%^
-    expiration: 3000000

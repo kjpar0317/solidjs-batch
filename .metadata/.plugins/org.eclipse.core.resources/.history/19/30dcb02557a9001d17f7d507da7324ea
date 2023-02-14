@@ -1,5 +1,0 @@
-package com.kjpar0317.batch.job.config;
-
-public class MysqlPartitonerJob {
-
-}
