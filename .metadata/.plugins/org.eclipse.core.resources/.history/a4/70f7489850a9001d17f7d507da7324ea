@@ -1,0 +1,8 @@
+package com.kjpar0317.batch.model;
+
+@ToString
+@Getter
+@Setter
+public class JobInfo {
+
+}

@@ -1,0 +1,5 @@
+package com.kjpar0317.batch.job.utils;
+
+public class LinkedListItemReader {
+
+}

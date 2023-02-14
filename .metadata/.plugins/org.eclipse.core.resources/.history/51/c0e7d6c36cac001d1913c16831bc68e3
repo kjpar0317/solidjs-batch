@@ -1,0 +1,13 @@
+spring:
+  profiles:
+    active: local
+    
+security:
+  jjwt:
+    secret: pdfaf!rser@dfasdf#$%^pdfaf!rser@dfasdf#$%^
+    expiration: 3000000\
+  password:
+    encoder:
+      secret: fasdfasfsdaf!@
+      iteration: 3000
+      keylength: 12

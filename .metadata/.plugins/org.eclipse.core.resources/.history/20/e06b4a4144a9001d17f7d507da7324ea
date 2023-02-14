@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: local
+    
+security:
+  jjwt:
+    secret: pdfaf!rser@dfasdf#$%^pdfaf!rser@dfasdf#$%^
+    expiration: 3000000
