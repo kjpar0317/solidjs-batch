@@ -1,14 +1,3 @@
-
-dist
-.solid
-.output
-.vercel
-.netlify
-netlify
-
-# dependencies
-/node_modules
-
 # IDEs and editors
 /.idea
 .project
@@ -16,9 +5,5 @@ netlify
 *.launch
 .settings/
 
-# Temp
-gitignore
-
-# System Files
-.DS_Store
-Thumbs.db
+# Eclipse
+.metadata
