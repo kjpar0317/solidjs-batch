@@ -1,6 +1,7 @@
+import { For } from "solid-js";
 import { useLocation, A } from "@solidjs/router";
 
-import { useLayout } from "~/store";
+import { useStore } from "~/store";
 
 const ARR_SIDEBAR = [
   {
@@ -15,8 +16,8 @@ const ARR_SIDEBAR = [
     hint: null,
   },
   {
-    title: "GraphQL Test",
-    path: "/test",
+    title: "배치 관리",
+    path: "/about",
     svgPath: () => (
       <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
     ),
@@ -26,7 +27,7 @@ const ARR_SIDEBAR = [
 
 function Sidebar() {
   const location = useLocation();
-  const layout = useLayout();
+  const [store] = useStore();
 
   // function handleLinkClick() {
   //   setSidebar(false);
@@ -37,9 +38,9 @@ function Sidebar() {
       <aside
         id="sidebar"
         class={
-          layout.sidebar()
-            ? "fixed top-0 left-0 z-20 h-full w-64 flex-shrink-0 flex-col pt-16 duration-75 lg:flex transition-width drawer-side hidden"
-            : "fixed top-0 left-0 z-20 h-full w-64 flex-shrink-0 flex-col pt-16 duration-75 lg:flex transition-width drawer-side flex"
+          store.layouts.sidebar()
+            ? "fixed top-0 left-0 z-20 h-[calc(100vh_-_70px)] w-64 flex-shrink-0 flex-col pt-16 duration-75 lg:flex transition-width drawer-side hidden"
+            : "fixed top-0 left-0 z-20 h-[calc(100vh_-_70px)] w-64 flex-shrink-0 flex-col pt-16 duration-75 lg:flex transition-width drawer-side flex"
         }
         aria-label="Sidebar"
       >
@@ -73,35 +74,37 @@ function Sidebar() {
                     </div>
                   </form>
                 </li>
-                {ARR_SIDEBAR.map((m, index) => (
-                  <li>
-                    <A
-                      href={m.path}
-                      class={
-                        location.pathname === m.path
-                          ? "flex items-center p-2 text-base font-normal rounded-lg group active"
-                          : "flex items-center p-2 text-base font-normal rounded-lg group"
-                      }
-                    >
-                      <svg
-                        class="w-6 h-6 transition duration-75"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                        xmlns="http://www.w3.org/2000/svg"
+                <For each={ARR_SIDEBAR}>
+                  {(m) => (
+                    <li>
+                      <A
+                        href={m.path}
+                        class={
+                          location.pathname === m.path
+                            ? "flex items-center p-2 text-base font-normal rounded-lg group active"
+                            : "flex items-center p-2 text-base font-normal rounded-lg group"
+                        }
                       >
-                        {m.svgPath()}
-                      </svg>
-                      {(!m.hint && <span class="flex-1">{m.title}</span>) || (
-                        <>
-                          <span class="flex-1">{m.title}</span>
-                          <span class="flex-none lowercase badge badge-sm">
-                            {m.hint}
-                          </span>
-                        </>
-                      )}
-                    </A>
-                  </li>
-                ))}
+                        <svg
+                          class="w-6 h-6 transition duration-75"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          {m.svgPath()}
+                        </svg>
+                        {(!m.hint && <span class="flex-1">{m.title}</span>) || (
+                          <>
+                            <span class="flex-1">{m.title}</span>
+                            <span class="flex-none lowercase badge badge-sm">
+                              {m.hint}
+                            </span>
+                          </>
+                        )}
+                      </A>
+                    </li>
+                  )}
+                </For>
               </ul>
             </div>
           </div>

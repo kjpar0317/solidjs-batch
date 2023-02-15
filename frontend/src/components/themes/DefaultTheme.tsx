@@ -1,7 +1,7 @@
 import { JSXElement, Switch, Match } from "solid-js";
-import { useNavigate, A } from "solid-start";
+import { useNavigate } from "solid-start";
 
-import { useLayout } from "~/store";
+import { useStore } from "~/store";
 import Login from "~/routes/login";
 import { Header, Sidebar, Footer } from "../layouts/common";
 
@@ -11,7 +11,7 @@ interface DefaultThemeProps {
 
 export default function DefaultTheme(props: DefaultThemeProps) {
   const navigate = useNavigate();
-  const layout = useLayout();
+  const [store] = useStore();
 
   function isAuthenticated() {
     const accessToken =
@@ -25,7 +25,7 @@ export default function DefaultTheme(props: DefaultThemeProps) {
   }
 
   return (
-    <div data-theme={layout.theme()} class="w-full h-full">
+    <div data-theme={store.layouts.theme()} class="w-full h-full">
       <Switch>
         <Match when={isAuthenticated()}>
           <Header />

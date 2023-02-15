@@ -1,20 +1,19 @@
 import { For } from "solid-js";
-import { useNavigate } from "@solidjs/router";
+import { useNavigate } from "solid-start";
 
 import { ARR_THEME } from "~/constants";
-import { useLayout, useAuth } from "~/store";
+import { useStore } from "~/store";
 
 function Header() {
   const navigate = useNavigate();
-  const layout = useLayout();
-  const auth = useAuth();
+  const [store, { setTheme, setSidebar, doLogout }] = useStore();
 
   function handleTheme(theme: string) {
-    layout.setTheme(theme);
+    setTheme(theme);
   }
 
   function handleLogOut() {
-    auth.doLogout();
+    doLogout();
     navigate("/login", { replace: true });
   }
 
@@ -26,7 +25,7 @@ function Header() {
             <label class="btn swap btn-circle swap-rotate lg:hidden">
               <input
                 type="checkbox"
-                onClick={() => layout.setSidebar(!layout.sidebar)}
+                onClick={() => setSidebar(!store.layouts.sidebar())}
                 class="hidden"
               />
               <svg
@@ -60,7 +59,7 @@ function Header() {
               action="#"
               method="get"
               class={
-                (!layout.sidebar() && "lg:block lg:pl-32") ||
+                (!store.layouts.sidebar() && "lg:block lg:pl-32") ||
                 "hidden lg:block lg:pl-32"
               }
             >

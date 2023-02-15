@@ -1,5 +1,4 @@
 import { createSignal, createResource } from "solid-js";
-import { useNavigate } from "@solidjs/router";
 import { fetchUser } from "~/apis";
 
 export interface AuthProps {
@@ -8,7 +7,6 @@ export interface AuthProps {
 };
 
 export default function createAuth(state: any, setState: any, actions: any) {
-    const navigate = useNavigate();
     const [auth, setAuth] = createSignal({ id: '', passwd: '' }); 
     const [authenticated, { mutate, refetch }] = createResource(auth, fetchUser);
 
@@ -19,8 +17,7 @@ export default function createAuth(state: any, setState: any, actions: any) {
             refetch();
         },
         doLogout() {
-            sessionStorage.removeItem("token");
-            navigate("/login");
+            sessionStorage.clear();
         }
     });
 

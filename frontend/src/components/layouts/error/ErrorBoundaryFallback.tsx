@@ -1,10 +1,10 @@
 interface ErrorBoundaryFallbackProps {
-  e: any;
+  err: any;
   reset: () => void;
 }
 
 export default function ErrorFallback({
-  e,
+  err,
   reset,
 }: ErrorBoundaryFallbackProps) {
   return (
@@ -13,7 +13,7 @@ export default function ErrorFallback({
         <h2 class="text-5xl font-bold leading-tight text-primary-content">
           Error Page
         </h2>
-        <p class="mt-5 text-xl leading-8 text-primary-content">{e}</p>
+        <p class="mt-5 text-xl leading-8 text-primary-content">{err}</p>
         <div class="mt-6 flex items-center justify-center gap-4">
           <button
             onClick={reset}

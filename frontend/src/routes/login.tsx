@@ -1,8 +1,9 @@
-import { Show } from "solid-js";
+import { createEffect } from "solid-js";
+import { useNavigate } from "solid-start";
 import { createForm } from "@felte/solid";
 import { validator } from "@felte/validator-yup";
 import * as yup from "yup";
-import { useAuth, AuthProps } from "~/store";
+import { useStore } from "~/store";
 
 // Setting validation messages
 yup.setLocale({
@@ -22,16 +23,25 @@ const schema = yup.object({
 });
 
 export default function Login() {
-  const auth = useAuth();
+  const navigate = useNavigate();
+  const [store, { doLogin }] = useStore();
   const { form, errors } = createForm({
     initialValues: {
       id: "",
       password: "",
     },
     onSubmit: (values: any) => {
-      auth.doLogin({ id: values.id, passwd: values.password });
+      doLogin({ id: values.id, passwd: values.password });
     },
     extend: validator({ schema }), // OR `extend: [validator({ schema })],`
+  });
+
+  createEffect(() => {
+    if (store.auths() && store.auths().token) {
+      const data = store.auths();
+      sessionStorage.setItem("token", data.token);
+      navigate("/");
+    }
   });
 
   return (

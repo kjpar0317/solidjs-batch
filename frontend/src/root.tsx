@@ -10,15 +10,18 @@ import {
   Routes,
   Scripts,
   Title,
+  useNavigate,
 } from "solid-start";
 import ErrorBoundartFallback from "~/components/layouts/error/ErrorBoundaryFallback";
-import { Provider, useStore } from "~/store";
+import { Provider } from "~/store";
 
 import "./root.css";
 
 export default function Root() {
+  const navigate = useNavigate();
+
   function reset() {
-    console.log("aaa");
+    navigate("/login");
   }
 
   return (
@@ -30,13 +33,15 @@ export default function Root() {
           <Meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
         <Body class="w-full h-full">
-            <Suspense>
-              <ErrorBoundary fallback={(e) => ErrorBoundartFallback({ err: e, reset: reset })}>
-                <Routes>
-                  <FileRoutes />
-                </Routes>
-              </ErrorBoundary>
-            </Suspense>
+          <Suspense>
+            <ErrorBoundary
+              fallback={(e) => ErrorBoundartFallback({ err: e, reset: reset })}
+            >
+              <Routes>
+                <FileRoutes />
+              </Routes>
+            </ErrorBoundary>
+          </Suspense>
           <Scripts />
         </Body>
       </Html>
