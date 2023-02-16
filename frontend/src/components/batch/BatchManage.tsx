@@ -16,6 +16,8 @@ export function BatchManage(): JSXElement {
 
   const defaultColDef = {
     flex: 1,
+    filter: true,
+    sortable: true,
   };
 
   return (
