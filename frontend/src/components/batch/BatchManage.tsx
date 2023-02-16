@@ -33,7 +33,7 @@ export function BatchManage(): JSXElement {
       <div class="ag-theme-alpine w-full h-[calc(100vh_-_230px)] pt-2">
         <AgGridSolid
           columnDefs={columnDefs}
-          rowData={[]}
+          rowData={rowData}
           defaultColDef={defaultColDef}
           pagination
         />
