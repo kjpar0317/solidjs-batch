@@ -12,9 +12,12 @@ import {
   Title,
   useNavigate,
 } from "solid-start";
-import ErrorBoundartFallback from "~/components/layouts/error/ErrorBoundaryFallback";
-import { Provider } from "~/store";
 
+import { Provider } from "~/store";
+import ErrorBoundartFallback from "~/components/layouts/error/ErrorBoundaryFallback";
+
+import "ag-grid-community/styles/ag-grid.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import "./root.css";
 
 export default function Root() {

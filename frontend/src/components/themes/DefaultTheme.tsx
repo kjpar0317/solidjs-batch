@@ -1,4 +1,5 @@
-import { JSXElement, Switch, Match } from "solid-js";
+import { Switch, Match } from "solid-js";
+import type { JSXElement } from "solid-js";
 import { useNavigate } from "solid-start";
 
 import { useStore } from "~/store";
@@ -9,7 +10,7 @@ interface DefaultThemeProps {
   children: JSXElement;
 }
 
-export default function DefaultTheme(props: DefaultThemeProps) {
+export default function DefaultTheme(props: DefaultThemeProps): JSXElement {
   const navigate = useNavigate();
   const [store] = useStore();
 
@@ -30,7 +31,10 @@ export default function DefaultTheme(props: DefaultThemeProps) {
         <Match when={isAuthenticated()}>
           <Header />
           <Sidebar />
-          <main class="relative w-full overflow-y-auto border-base-300 bg-base-200 pt-20 text-base-content h-[calc(100vh_-_70px)] lg:ml-64 lg:w-[calc(100%_-_16rem)]">
+          <main
+            class="relative w-full overflow-y-auto border-base-300 bg-base-200 pt-20 text-base-content h-[calc(100vh_-_70px)] lg:ml-64 lg:w-[calc(100%_-_16rem)]"
+            classList={{ "w-full": !store.layouts.sidebar() }}
+          >
             {props.children}
           </main>
           <Footer />

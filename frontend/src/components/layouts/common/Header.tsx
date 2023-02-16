@@ -1,10 +1,11 @@
 import { For } from "solid-js";
+import type { JSXElement } from "solid-js";
 import { useNavigate } from "solid-start";
 
 import { ARR_THEME } from "~/constants";
 import { useStore } from "~/store";
 
-function Header() {
+function Header(): JSXElement {
   const navigate = useNavigate();
   const [store, { setTheme, setSidebar, doLogout }] = useStore();
 
@@ -26,7 +27,7 @@ function Header() {
               <input
                 type="checkbox"
                 onClick={() => setSidebar(!store.layouts.sidebar())}
-                class="hidden"
+                // class="hidden"
               />
               <svg
                 class="fill-current swap-off"
@@ -58,10 +59,8 @@ function Header() {
             <form
               action="#"
               method="get"
-              class={
-                (!store.layouts.sidebar() && "lg:block lg:pl-32") ||
-                "hidden lg:block lg:pl-32"
-              }
+              class="lg:block lg:pl-32"
+              classList={{ hidden: !store.layouts.sidebar() }}
             >
               <label html-for="topbar-search" class="sr-only">
                 Search

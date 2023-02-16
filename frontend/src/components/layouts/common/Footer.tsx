@@ -1,4 +1,6 @@
-function Footer() {
+import type { JSXElement } from "solid-js";
+
+function Footer(): JSXElement {
   return (
     <footer class="items-center p-4 footer bg-primary text-primary-content">
       <div class="items-center grid-flow-col">

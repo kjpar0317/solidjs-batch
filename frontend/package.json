@@ -18,13 +18,18 @@
     "@felte/reporter-tippy": "^1.1.5",
     "@felte/solid": "^1.2.7",
     "@felte/validator-yup": "^1.0.11",
+    "@fontsource/noto-sans-kr": "^4.5.12",
     "@solidjs/meta": "^0.28.2",
     "@solidjs/router": "^0.7.0",
+    "ag-grid-community": "^29.0.0",
+    "ag-grid-solid": "^29.0.0",
     "daisyui": "^2.50.0",
+    "solid-gridstack": "^0.0.4",
     "solid-js": "^1.6.10",
     "solid-start": "^0.2.20",
+    "typeface-nanum-square-round": "^1.0.2",
     "undici": "^5.15.1",
-    "yup": "^1.0.0"
+    "yup": "^0.32.11"
   },
   "engines": {
     "node": ">=16"

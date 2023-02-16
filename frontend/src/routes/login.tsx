@@ -1,3 +1,4 @@
+import type { JSXElement } from "solid-js";
 import { createEffect } from "solid-js";
 import { useNavigate } from "solid-start";
 import { createForm } from "@felte/solid";
@@ -22,7 +23,7 @@ const schema = yup.object({
   password: yup.string().required(),
 });
 
-export default function Login() {
+export default function Login(): JSXElement {
   const navigate = useNavigate();
   const [store, { doLogin }] = useStore();
   const { form, errors } = createForm({
