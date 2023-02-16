@@ -21,7 +21,7 @@ export default function DefaultTheme(props: DefaultThemeProps): JSXElement {
     if (accessToken) {
       return true;
     } else {
-      navigate("/login");
+      navigate("/login", { replace: true });
     }
   }
 

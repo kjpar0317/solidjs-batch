@@ -14,6 +14,7 @@ import {
 } from "solid-start";
 
 import { Provider } from "~/store";
+import { Loading } from "~/components/layouts/common";
 import ErrorBoundartFallback from "~/components/layouts/error/ErrorBoundaryFallback";
 
 import "ag-grid-community/styles/ag-grid.css";
@@ -36,7 +37,7 @@ export default function Root() {
           <Meta name="viewport" content="width=device-width, initial-scale=1" />
         </Head>
         <Body class="w-full h-full">
-          <Suspense>
+          <Suspense fallback={Loading}>
             <ErrorBoundary
               fallback={(e) => ErrorBoundartFallback({ err: e, reset: reset })}
             >
