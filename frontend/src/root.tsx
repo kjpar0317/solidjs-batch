@@ -17,9 +17,10 @@ import { Provider } from "~/store";
 import { Loading } from "~/components/layouts/common";
 import ErrorBoundartFallback from "~/components/layouts/error/ErrorBoundaryFallback";
 
+import "./root.css";
+import "tippy.js/dist/tippy.css";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-alpine.css";
-import "./root.css";
 
 export default function Root() {
   const navigate = useNavigate();

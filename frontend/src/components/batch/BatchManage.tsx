@@ -1,7 +1,11 @@
-import type { JSXElement } from "solid-js";
+import { createSignal, JSXElement } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 
+import ConfirmModal from "~/components/modal/ConfirmModal";
+
 export function BatchManage(): JSXElement {
+  const [open, setOpen] = createSignal<boolean>(false);
+
   const columnDefs = [
     { field: "make" },
     { field: "model" },
@@ -32,7 +36,12 @@ export function BatchManage(): JSXElement {
           </li>
         </ul>
       </div>
-      <div class="ag-theme-alpine w-full h-[calc(100vh_-_230px)] pt-2">
+      <div class="text-right">
+        <button class="btn" onClick={() => setOpen(true)}>
+          테스트
+        </button>
+      </div>
+      <div class="ag-theme-alpine w-full h-[calc(100vh_-_270px)] pt-2">
         <AgGridSolid
           columnDefs={columnDefs}
           rowData={rowData}
@@ -40,6 +49,13 @@ export function BatchManage(): JSXElement {
           pagination
         />
       </div>
+      <ConfirmModal
+        open={open()}
+        onOk={() => setOpen(false)}
+        onClose={() => setOpen(false)}
+      >
+        정말 지우시겠습니까?
+      </ConfirmModal>
     </div>
   );
 }

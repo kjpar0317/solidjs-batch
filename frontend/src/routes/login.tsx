@@ -2,6 +2,7 @@ import type { JSXElement } from "solid-js";
 import { createEffect } from "solid-js";
 import { useNavigate } from "solid-start";
 import { createForm } from "@felte/solid";
+import reporter from "@felte/reporter-tippy";
 import { validator } from "@felte/validator-yup";
 import * as yup from "yup";
 import { useStore } from "~/store";
@@ -34,7 +35,7 @@ export default function Login(): JSXElement {
     onSubmit: (values: any) => {
       doLogin({ id: values.id, passwd: values.password });
     },
-    extend: validator({ schema }), // OR `extend: [validator({ schema })],`
+    extend: [validator({ schema }), reporter()], // OR `extend: [validator({ schema })],`
   });
 
   createEffect(() => {

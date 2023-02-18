@@ -50,7 +50,9 @@ export function Dashboard(): JSXElement {
           </div>
         ))}
       />
-      <Modal open={open()} onClose={() => setOpen(false)} />
+      <Modal title="테스트" open={open()} onClose={() => setOpen(false)}>
+        <div class="h-[1200px]">테스트</div>
+      </Modal>
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { For } from "solid-js";
 import type { JSXElement } from "solid-js";
+import { useNavigate } from "solid-start";
 
 import { ARR_THEME } from "~/constants";
 import { useStore } from "~/store";
 
 function Header(): JSXElement {
+  const navigate = useNavigate();
   const [store, { setTheme, setSidebar, doLogout }] = useStore();
 
   function handleTheme(theme: string) {
@@ -12,7 +14,9 @@ function Header(): JSXElement {
   }
 
   function handleLogOut() {
+    console.log("logout");
     doLogout();
+    navigate("/login");
   }
 
   return (
