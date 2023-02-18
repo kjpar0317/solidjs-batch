@@ -1,5 +1,5 @@
 import type { JSXElement } from "solid-js";
-import { createSignal } from "solid-js";
+import { createSignal, createEffect } from "solid-js";
 import { GridStack } from "solid-gridstack";
 
 import { useStore } from "~/store";
@@ -10,6 +10,17 @@ import Modal from "~/components/modal/Modal";
 export function Dashboard(): JSXElement {
   const [store] = useStore();
   const [open, setOpen] = createSignal<boolean>(false);
+  let gridRef: any;
+  const options = {
+    acceptWidgets: true,
+    float: true,
+    cellHeight: 120,
+    resizable: { handles: "e, se, s, sw, w" },
+  };
+
+  createEffect(() => {
+    console.log(gridRef);
+  });
 
   function handleWidgetClick() {
     setOpen(true);
@@ -18,32 +29,36 @@ export function Dashboard(): JSXElement {
   return (
     <div class="w-full h-full pt-4 pl-2 pr-2">
       <GridStack
+        ref={gridRef}
         div={{ style: { margin: "2.5px" } }}
+        options={options}
         items={ARR_GRID_LAYOUTS.map((m, i) => (
           <div
             gs-x={m.x}
             gs-y={m.y}
             gs-w={m.w}
             gs-h={m.h}
-            gs-auto-position="m.auto_position"
+            gs-auto-position={m.auto_position}
           >
-            <div
-              class="bg-base-100"
-              style={{
-                margin: "2.5px",
-                height: "calc(100% - 5px)",
-                width: "calc(100% - 5px)",
-                color: getTextColorByTheme(store.layouts.theme()),
-                "border-radius": "7.5px",
-              }}
-            >
-              <div class="w-full h-full p-2">
-                <span>{m.title}</span>
-                <div>
-                  afdasfd
-                  <button class="btn btn-primary" onClick={handleWidgetClick}>
-                    테스트
-                  </button>
+            <div class="grid-stack-item">
+              <div
+                class="bg-base-100 grid-stack-item-content"
+                style={{
+                  margin: "2.5px",
+                  height: "calc(100% - 5px)",
+                  width: "calc(100% - 5px)",
+                  color: getTextColorByTheme(store.layouts.theme()),
+                  "border-radius": "7.5px",
+                }}
+              >
+                <div class="w-full h-full p-2">
+                  <span>{m.title}</span>
+                  <div>
+                    afdasfd
+                    <button class="btn btn-primary" onClick={handleWidgetClick}>
+                      테스트
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>

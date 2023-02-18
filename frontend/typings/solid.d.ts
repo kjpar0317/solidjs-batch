@@ -1,4 +1,4 @@
-interface IAuthProps {
+interface AuthProps {
     id: string;
     passwd: string;
 }

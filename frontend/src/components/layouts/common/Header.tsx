@@ -7,15 +7,15 @@ import { useStore } from "~/store";
 
 function Header(): JSXElement {
   const navigate = useNavigate();
-  const [store, { setTheme, setSidebar, doLogout }] = useStore();
+  const [store, { setTheme, setSidebar, setAuth }] = useStore();
 
   function handleTheme(theme: string) {
     setTheme(theme);
   }
 
   function handleLogOut() {
-    console.log("logout");
-    doLogout();
+    setAuth({ id: "", passwd: "" });
+    sessionStorage.clear();
     navigate("/login");
   }
 

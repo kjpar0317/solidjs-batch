@@ -26,14 +26,14 @@ const schema = yup.object({
 
 export default function Login(): JSXElement {
   const navigate = useNavigate();
-  const [store, { doLogin }] = useStore();
+  const [store, { setAuth }] = useStore();
   const { form, errors } = createForm({
     initialValues: {
       id: "",
       password: "",
     },
     onSubmit: (values: any) => {
-      doLogin({ id: values.id, passwd: values.password });
+      setAuth({ id: values.id, passwd: values.password });
     },
     extend: [validator({ schema }), reporter()], // OR `extend: [validator({ schema })],`
   });
