@@ -14,7 +14,7 @@ function Header(): JSXElement {
   }
 
   function handleLogOut() {
-    setAuth({ id: "", passwd: "" });
+    setAuth({ id: "", password: "" });
     sessionStorage.clear();
     navigate("/login");
   }

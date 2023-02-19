@@ -33,7 +33,7 @@ export default function Login(): JSXElement {
       password: "",
     },
     onSubmit: (values: any) => {
-      setAuth({ id: values.id, passwd: values.password });
+      setAuth({ id: values.id, password: values.password });
     },
     extend: [validator({ schema }), reporter()], // OR `extend: [validator({ schema })],`
   });

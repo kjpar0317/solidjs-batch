@@ -12,6 +12,7 @@ import {
   Title,
   useNavigate,
 } from "solid-start";
+import { Toaster } from "solid-toast";
 
 import { Provider } from "~/store";
 import { Loading } from "~/components/layouts/common";
@@ -47,6 +48,11 @@ export default function Root() {
               </Routes>
             </ErrorBoundary>
           </Suspense>
+          <Toaster
+            position="bottom-right"
+            // Spacing between each toast in pixels
+            gutter={8}
+          />
           <Scripts />
         </Body>
       </Html>

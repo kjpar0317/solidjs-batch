@@ -1,6 +1,33 @@
 spring:
   profiles:
     active: local
+  jpa:
+    hibernate:
+        ddl-auto: create  # create or update
+        naming:
+            physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    properties:
+      hibernate.dialect: org.hibernate.dialect.MariaDBDialect
+
+dbconn:
+  mariadb:
+    datasource:
+        driver-class-name: org.mariadb.jdbc.Driver
+        url: jdbc:mariadb://127.0.0.1:3306/test
+        username: test
+        password: test
+        hikari:
+#          auto-commit: false
+#          connection-test-query: SELECT 1
+#          minimum-idle: 10
+#          maximum-pool-size: 50
+          pool-name: pkj        
+#  secondary:
+#    datasource:
+#      driver-class-name: com.mysql.cj.jdbc.Driver
+#      url: jdbc:mysql://localhost:3308/SCHEMA_NAME?serverTimezone=UTC&characterEncoding=UTF-8
+#      username: root
+#      password: password    
 
 server:
   port: 8080
@@ -8,7 +35,7 @@ server:
 security:
   jjwt:
     secret: pdfaf!rser@dfasdf#$%^pdfaf!rser@dfasdf#$%^
-    expiration: 3000000\
+    expiration: 3000000
   password:
     encoder:
       secret: fasdfasfsdaf!@

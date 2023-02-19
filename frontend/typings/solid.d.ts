@@ -1,4 +1,4 @@
 interface AuthProps {
     id: string;
-    passwd: string;
+    password: string;
 }

@@ -1,18 +1,14 @@
 package com.kjpar0317.batch.config;
 
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Optional;
 
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.PermissionEvaluator;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UserDetailsRepositoryReactiveAuthenticationManager;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
@@ -29,7 +25,11 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 import org.springframework.web.server.WebFilter;
 
+import com.kjpar0317.batch.auth.JwtTokenAuthenticationFilter;
+import com.kjpar0317.batch.auth.JwtTokenProvider;
 import com.kjpar0317.batch.auth.JwtUserInfo;
+import com.kjpar0317.batch.model.UsersEntity;
+import com.kjpar0317.batch.repository.UsersRepository;
 
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Mono;
@@ -39,7 +39,8 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
-	private final ApplicationContext applicationContext;
+//	private final ApplicationContext applicationContext;
+	private final JwtTokenProvider jwtTokenProvider;
 
 //	@Bean
 //	@DependsOn({ "methodSecurityExpressionHandler" })
@@ -83,7 +84,7 @@ public class SecurityConfig {
 		.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 		.authorizeExchange(exchange -> exchange.pathMatchers(HttpMethod.OPTIONS).permitAll()
 				.pathMatchers("/batch/login").permitAll().anyExchange().authenticated())
-//		.addFilterBefore((WebFilter) new JwtTokenAuthenticationFilter(jwtTokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+		.addFilterBefore((WebFilter) new JwtTokenAuthenticationFilter(jwtTokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
 		.build();
     }
     
@@ -120,36 +121,38 @@ public class SecurityConfig {
 		};
 	}
 
-//	@Bean
-//	public ReactiveUserDetailsService userDetailsService(UsUserMasterRepository usUserMasterRepository) {
-//		return username -> {
-//			UsUserMasterEntity usUserMaster = usUserMasterRepository.findUsUserMasterEntityByUsername(username);
-//			if (usUserMaster == null)
-//				return Mono.empty();
-//
-//			JwtUserInfo jwtInfo = new JwtUserInfo();
-//			jwtInfo.setUsername(usUserMaster.getUsername());
-//			jwtInfo.setPassword(usUserMaster.getPassword());
-//			jwtInfo.setEnabled(usUserMaster.isActive());
-//			jwtInfo.setAccountNonExpired(usUserMaster.isActive());
-//			jwtInfo.setCredentialsNonExpired(usUserMaster.isActive());
-//			jwtInfo.setAccountNonLocked(usUserMaster.isActive());
-//
+	@Bean
+	public ReactiveUserDetailsService userDetailsService(UsersRepository userRepository) {
+		return username -> {
+			Optional<UsersEntity> usersEntity = userRepository.findById(username);
+
+			if(usersEntity.isEmpty()) {
+				return Mono.empty();
+			}
+			
+			JwtUserInfo jwtInfo = new JwtUserInfo();
+			jwtInfo.setUsername(usersEntity.get().getName());
+			jwtInfo.setPassword(usersEntity.get().getPassword());
+			jwtInfo.setEnabled(usersEntity.get().isEnabled());
+			jwtInfo.setAccountNonExpired(usersEntity.get().isAccountNonExpired());
+			jwtInfo.setCredentialsNonExpired(usersEntity.get().isCredentialsNonExpired());
+			jwtInfo.setAccountNonLocked(usersEntity.get().isAccountNonLocked());
+
 //			List<String> permissions = jwtInfo.getPermissions();
 //			usUserMaster.getUsUserRoleEntityList().stream().forEach(usUserRoleEntity -> {
 //				usUserRoleEntity.getUsRoleEntity().getUsRolePermissionEntityList().stream()
 //						.forEach(usRolePermissionEntity -> permissions
 //								.add(usRolePermissionEntity.getUsPermissionEntity().getPermissionCode()));
 //			});
-//			return Mono.just(jwtInfo);
-//		};
-//	}
+			return Mono.just(jwtInfo);
+		};
+	}
 
-//	@Bean
-//	public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
-//			PasswordEncoder passwordEncoder) {
-//		var authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
-//		authenticationManager.setPasswordEncoder(passwordEncoder);
-//		return authenticationManager;
-//	}
+	@Bean
+	public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
+			PasswordEncoder passwordEncoder) {
+		var authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
+		authenticationManager.setPasswordEncoder(passwordEncoder);
+		return authenticationManager;
+	}
 }
