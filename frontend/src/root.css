@@ -56,13 +56,18 @@ body {
     background-color: hsl(var(--b1)/var(--tw-bg-opacity));
   }
   
-  .ag-theme-alpine .ag-paging-panel {
-    background-color: hsl(var(--b2, var(--b1)/var(--tw-bg-opacity)));
-    border-top: 1px solid;
-    border-top-color: hsl(var(--b2, var(--b1)/var(--tw-bg-opacity)));
-    --tw-text-opacity: 1;
+.ag-theme-alpine .ag-paging-panel {
+  background-color: hsl(var(--b2, var(--b1)/var(--tw-bg-opacity)));
+  border-top: 1px solid;
+  border-top-color: hsl(var(--b2, var(--b1)/var(--tw-bg-opacity)));
+  --tw-text-opacity: 1;
+  color: hsl(var(--bc)/var(--tw-text-opacity));
+}
+
+.ag-icon-menu::before {
+    content: var(--ag-icon-font-code-menu, "\f11d");
     color: hsl(var(--bc)/var(--tw-text-opacity));
-  }
+}
   
   .card-body {
     display: flex;
