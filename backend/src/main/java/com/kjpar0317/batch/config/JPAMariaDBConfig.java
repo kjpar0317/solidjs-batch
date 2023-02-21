@@ -43,7 +43,7 @@ public class JPAMariaDBConfig {
 	@Bean
 	public LocalContainerEntityManagerFactoryBean mariadbEntityManagerFactory(EntityManagerFactoryBuilder builder,
 			@Qualifier("mariadbDataSource") DataSource dataSource) {
-		return builder.dataSource(dataSource).packages("com.kjpar0317.batch.model")
+		return builder.dataSource(dataSource).packages("com.kjpar0317.batch.**.model")
 				.persistenceUnit("mariadbEntityManager").build();
 	}
 

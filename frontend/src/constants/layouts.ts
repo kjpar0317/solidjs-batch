@@ -6,7 +6,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 3,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'barDataLabel',
     },
     {
         title: '테스트2',
@@ -15,7 +15,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 3,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
     {
         title: '테스트3',
@@ -24,7 +24,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 3,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
     {
         title: '테스트4',
@@ -33,7 +33,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 3,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
     {
         title: '테스트5',
@@ -42,7 +42,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 6,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
     {
         title: '테스트6',
@@ -51,7 +51,7 @@ export const ARR_GRID_LAYOUTS = [
         w: 6,
         h: 2,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
     {
         title: '테스트7',
@@ -60,6 +60,6 @@ export const ARR_GRID_LAYOUTS = [
         w: 12,
         h: 3,
         auto_position: true,
-        widget: 'TestGrid',
+        module: 'TestGrid',
     },
 ];

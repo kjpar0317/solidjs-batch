@@ -1,5 +1,5 @@
 import type { JSXElement } from "solid-js";
-import { createEffect } from "solid-js";
+import { createEffect, batch } from "solid-js";
 import { useNavigate } from "solid-start";
 import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
@@ -40,9 +40,11 @@ export default function Login(): JSXElement {
 
   createEffect(() => {
     if (store.auths() && store.auths().token) {
-      const data = store.auths();
-      sessionStorage.setItem("token", data.token);
-      navigate("/");
+      batch(() => {
+        const data = store.auths();
+        sessionStorage.setItem("token", data.token);
+        navigate("/");
+      });
     }
   });
 

@@ -6,6 +6,7 @@ import { useStore } from "~/store";
 import { ARR_GRID_LAYOUTS } from "~/constants";
 import { getTextColorByTheme } from "~/utils/comm-utils";
 import Modal from "~/components/modal/Modal";
+import DefaultWidget from "~/components/widgets/DefaultWidget";
 
 export function Dashboard(): JSXElement {
   const [store] = useStore();
@@ -40,7 +41,7 @@ export function Dashboard(): JSXElement {
             gs-h={m.h}
             gs-auto-position={m.auto_position}
           >
-            <div class="grid-stack-item">
+            <div class="grid-stack-item h-full w-full">
               <div
                 class="bg-base-100 grid-stack-item-content"
                 style={{
@@ -51,15 +52,7 @@ export function Dashboard(): JSXElement {
                   "border-radius": "7.5px",
                 }}
               >
-                <div class="w-full h-full p-2">
-                  <span>{m.title}</span>
-                  <div>
-                    afdasfd
-                    <button class="btn btn-primary" onClick={handleWidgetClick}>
-                      테스트
-                    </button>
-                  </div>
-                </div>
+                <DefaultWidget title={m.title} module={m.module} />
               </div>
             </div>
           </div>
