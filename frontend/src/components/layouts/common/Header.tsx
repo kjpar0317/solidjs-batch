@@ -1,5 +1,5 @@
-import { For } from "solid-js";
 import type { JSXElement } from "solid-js";
+import { createSignal, For } from "solid-js";
 import { useNavigate } from "solid-start";
 
 import { ARR_THEME } from "~/constants";
@@ -7,9 +7,11 @@ import { useStore } from "~/store";
 
 function Header(): JSXElement {
   const navigate = useNavigate();
+  const [ctheme, setCtheme] = createSignal<boolean>(false);
   const [store, { setTheme, setSidebar, setAuth }] = useStore();
 
   function handleTheme(theme: string) {
+    setCtheme(!ctheme());
     setTheme(theme);
   }
 
@@ -113,7 +115,11 @@ function Header(): JSXElement {
             </button>
             <div class="items-center hidden lg:flex">
               <div title="Change Theme" class="dropdown dropdown-end">
-                <div tabIndex={0} class="gap-1 normal-case btn btn-ghost">
+                <div
+                  tabIndex={0}
+                  class="gap-1 normal-case btn btn-ghost"
+                  onClick={() => setCtheme(!ctheme())}
+                >
                   <svg
                     width="20"
                     height="20"
@@ -140,7 +146,10 @@ function Header(): JSXElement {
                     <path d="M1799 349l242 241-1017 1017L7 590l242-241 775 775 775-775z"></path>
                   </svg>
                 </div>
-                <div class="dropdown-content rounded-t-box rounded-b-box top-px mt-16 h-[70vh] max-h-96 w-52 overflow-y-auto bg-base-200 text-base-content shadow-2xl">
+                <div
+                  class="dropdown-content rounded-t-box rounded-b-box top-px mt-16 h-[70vh] max-h-96 w-52 overflow-y-auto bg-base-200 text-base-content shadow-2xl"
+                  classList={{ hidden: !ctheme() }}
+                >
                   <div class="grid grid-cols-1 gap-3 p-3" tabIndex={0}>
                     <For each={ARR_THEME}>
                       {(m) => (

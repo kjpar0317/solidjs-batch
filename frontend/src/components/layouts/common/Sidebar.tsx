@@ -28,7 +28,7 @@ const ARR_SIDEBAR = [
 
 function Sidebar(): JSXElement {
   const location = useLocation();
-  const [store] = useStore();
+  const [store, { setSidebar }] = useStore();
 
   // function handleLinkClick() {
   //   setSidebar(false);
@@ -83,6 +83,7 @@ function Sidebar(): JSXElement {
                         href={m.path}
                         class="flex items-center p-2 text-base font-normal rounded-lg group"
                         classList={{ active: location.pathname === m.path }}
+                        onClick={() => setSidebar(!store.layouts.sidebar())}
                       >
                         <svg
                           class="w-6 h-6 transition duration-75"
