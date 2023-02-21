@@ -165,6 +165,19 @@ function Header(): JSXElement {
                           >
                             <div class="grid grid-cols-5 grid-rows-3">
                               <div class="flex col-span-5 row-span-3 row-start-1 gap-1 px-4 py-3">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  width="16"
+                                  height="16"
+                                  viewBox="0 0 24 24"
+                                  fill="currentColor"
+                                  class="w-3 h-3 invisible"
+                                  classList={{
+                                    invisible: m !== store.layouts.theme(),
+                                  }}
+                                >
+                                  <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>
+                                </svg>
                                 <div class="flex-grow text-sm font-bold">
                                   {m}
                                 </div>
