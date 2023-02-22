@@ -48,7 +48,7 @@ export function Dashboard(): JSXElement {
                   margin: "2.5px",
                   height: "calc(100% - 5px)",
                   width: "calc(100% - 5px)",
-                  color: getTextColorByTheme(store.layouts.theme()),
+                  color: getTextColorByTheme(store.layout.theme()),
                   "border-radius": "7.5px",
                 }}
               >

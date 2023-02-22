@@ -39,9 +39,9 @@ export default function Login(): JSXElement {
   });
 
   createEffect(() => {
-    if (store.auths() && store.auths().token) {
+    if (store.auth.authenticated() && store.auth.authenticated().token) {
       batch(() => {
-        const data = store.auths();
+        const data = store.auth.authenticated();
         sessionStorage.setItem("token", data.token);
         navigate("/");
       });

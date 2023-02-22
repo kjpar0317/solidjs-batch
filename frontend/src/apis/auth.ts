@@ -1,7 +1,7 @@
 import axiosUtils from "~/utils/axios-utils";
 
 export async function loginUser(auth: any) {
-  if(!auth.id || !auth.password) return;
+  // if(!auth.id || !auth.password) return;
 
   try {
     const res = await axiosUtils.post(`/api/batch/login`, auth);

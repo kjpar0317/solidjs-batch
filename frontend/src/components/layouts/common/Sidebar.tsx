@@ -18,7 +18,7 @@ const ARR_SIDEBAR = [
   },
   {
     title: "배치 관리",
-    path: "/batchManage",
+    path: "/batch",
     svgPath: () => (
       <path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
     ),
@@ -43,7 +43,7 @@ function Sidebar(): JSXElement {
       <aside
         id="sidebar"
         class="fixed top-0 left-0 z-20 h-[calc(100vh_-_70px)] w-64 flex-shrink-0 flex-col pt-16 duration-75 lg:flex transition-width drawer-side"
-        classList={{ hidden: store.layouts.sidebar() }}
+        classList={{ hidden: store.layout.sidebar() }}
         aria-label="Sidebar"
       >
         <div class="relative flex flex-col flex-1 min-h-0 pt-0 border-r border-base-400 bg-base-300 text-base-content">
@@ -83,7 +83,7 @@ function Sidebar(): JSXElement {
                         href={m.path}
                         class="flex items-center p-2 text-base font-normal rounded-lg group"
                         classList={{ active: location.pathname === m.path }}
-                        onClick={() => setSidebar(!store.layouts.sidebar())}
+                        onClick={() => setSidebar(!store.layout.sidebar())}
                       >
                         <svg
                           class="w-6 h-6 transition duration-75"

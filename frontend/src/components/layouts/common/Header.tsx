@@ -1,14 +1,12 @@
 import type { JSXElement } from "solid-js";
 import { createSignal, For } from "solid-js";
-import { useNavigate } from "solid-start";
 
 import { ARR_THEME } from "~/constants";
 import { useStore } from "~/store";
 
 function Header(): JSXElement {
-  const navigate = useNavigate();
   const [ctheme, setCtheme] = createSignal<boolean>(false);
-  const [store, { setTheme, setSidebar, setAuth }] = useStore();
+  const [store, { setTheme, setSidebar, setAuth, setIsLogined }] = useStore();
 
   function handleTheme(theme: string) {
     setCtheme(!ctheme());
@@ -16,9 +14,10 @@ function Header(): JSXElement {
   }
 
   function handleLogOut() {
-    setAuth({ id: "", password: "" });
     sessionStorage.clear();
-    navigate("/login");
+    setAuth(null);
+    setIsLogined(false);
+    location.href = "/login";
   }
 
   return (
@@ -29,7 +28,7 @@ function Header(): JSXElement {
             <label class="btn swap btn-circle swap-rotate lg:hidden">
               <input
                 type="checkbox"
-                onClick={() => setSidebar(!store.layouts.sidebar())}
+                onClick={() => setSidebar(!store.layout.sidebar())}
                 // class="hidden"
               />
               <svg
@@ -63,7 +62,7 @@ function Header(): JSXElement {
               action="#"
               method="get"
               class="lg:block lg:pl-32"
-              classList={{ hidden: !store.layouts.sidebar() }}
+              classList={{ hidden: !store.layout.sidebar() }}
             >
               <label html-for="topbar-search" class="sr-only">
                 Search
@@ -173,7 +172,7 @@ function Header(): JSXElement {
                                   fill="currentColor"
                                   class="w-3 h-3 invisible"
                                   classList={{
-                                    invisible: m !== store.layouts.theme(),
+                                    invisible: m !== store.layout.theme(),
                                   }}
                                 >
                                   <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z"></path>

@@ -3,19 +3,23 @@ import { createContext, useContext } from "solid-js";
 import { createStore } from "solid-js/store";
 import createLayout from "./createLayout";
 import createAuth from "./createAuth";
+import createBatch from "./createBatch";
 
 const StoreContext = createContext();
 
 export function Provider(props: { children: JSXElement }) {
-  let layouts: any, auths: any;
+  let layout: any, auth: any, batch: any;
 
   // const router = createRouteHandler("");
   const [state, setState] = createStore({
-    get layouts() {
-      return layouts;
+    get layout() {
+      return layout;
     },
-    get auths() {
-      return auths;
+    get auth() {
+      return auth;
+    },
+    get batch() {
+      return batch;
     },
   });
 
@@ -23,8 +27,9 @@ export function Provider(props: { children: JSXElement }) {
 
   const store = [state, actions];
 
-  layouts = createLayout(state, setState, actions);
-  auths = createAuth(state, setState, actions);
+  layout = createLayout(state, setState, actions);
+  auth = createAuth(state, setState, actions);
+  batch = createBatch(state, setState, actions);
 
   return (
     <StoreContext.Provider value={store}>

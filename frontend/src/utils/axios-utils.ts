@@ -16,7 +16,7 @@ const refreshAuthLogic = (failedRequest: any) =>
     });
 
 // Instantiate the interceptor
-createAuthRefreshInterceptor(axios, refreshAuthLogic);
+createAuthRefreshInterceptor(axiosUtils, refreshAuthLogic);
 
 async function responseValidate(error: any) {
 //   console.error(error.response);
@@ -38,6 +38,7 @@ async function responseValidate(error: any) {
     //     window.location.replace("/");
     //   }, 2000);
     // }
+    return error.response.data.message;
   }
 
    return error.response.status;
