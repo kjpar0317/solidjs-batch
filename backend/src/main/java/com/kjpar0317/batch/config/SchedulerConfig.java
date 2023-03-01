@@ -25,7 +25,7 @@ public class SchedulerConfig  {
     }
     
     @Bean
-    public void startSchedule() {
+    void startSchedule() {
     	service.addTaskToScheduler("TestConfig", () -> {System.out.println("asdfasfd");}, "2 * * * * ?");
     }
 }

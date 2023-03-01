@@ -1,11 +1,8 @@
 package com.kjpar0317.batch.repository;
 
-import java.util.Optional;
-
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 
-import com.kjpar0317.batch.model.UsersEntity;
+import com.kjpar0317.batch.entity.UsersEntity;
 
 public interface UsersRepository extends JpaRepository<UsersEntity, String> {
 

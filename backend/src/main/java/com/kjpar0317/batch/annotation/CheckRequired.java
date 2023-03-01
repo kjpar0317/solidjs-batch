@@ -14,7 +14,9 @@ public @interface CheckRequired {
 	
     String message() default "필수로 입력하셔야 합니다.";
 
-    Class[] groups() default {};
+    @SuppressWarnings("rawtypes")
+	Class[] groups() default {};
 
-    Class[] payload() default {};
+    @SuppressWarnings("rawtypes")
+	Class[] payload() default {};
 }

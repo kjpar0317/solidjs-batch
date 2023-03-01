@@ -39,6 +39,10 @@ public class ScheduleTaskService {
 		}
 	}
 
+	public void removeAllTaskFromScheduler() {
+		jobsMap.entrySet().parallelStream().forEach(f -> this.removeTaskFromScheduler(f.getKey()));
+	}
+	
 	// A context refresh event listener
 	@EventListener({ ContextRefreshedEvent.class })
 	void contextRefreshedEvent() {

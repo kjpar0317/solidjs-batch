@@ -11,7 +11,7 @@ import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import com.kjpar0317.batch.model.JobInfo;
+import com.kjpar0317.batch.entity.JobInfoEntity;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,19 +20,19 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Component
 public class JobHandler {
-//	private final JobLauncher jobLauncher;
-//
-//	public void startJob(JobInfo jobInfo) {
-//		ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-//		
-//		try {
-//			JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
-//					.toJobParameters();
-//
-//			jobLauncher.run((Job) context.getBean(jobInfo.getJobId()), jobParameters);
-//		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
-//				| JobParametersInvalidException e) {
-//			log.error("{}", e.getMessage());
-//		}
-//	}
+	private final JobLauncher jobLauncher;
+
+	public void startJob(JobInfoEntity jobInfo) {
+		ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+
+		try {
+			JobParameters jobParameters = new JobParametersBuilder().addLong("time", System.currentTimeMillis())
+					.toJobParameters();
+
+			jobLauncher.run((Job) context.getBean(jobInfo.getJobId()), jobParameters);
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+			log.error("{}", e.getMessage());
+		}
+	}
 }

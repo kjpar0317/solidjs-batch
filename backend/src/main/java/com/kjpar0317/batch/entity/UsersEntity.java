@@ -1,4 +1,4 @@
-package com.kjpar0317.batch.model;
+package com.kjpar0317.batch.entity;
 
 import java.util.Collection;
 
@@ -17,7 +17,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "USERS")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

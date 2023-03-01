@@ -28,7 +28,7 @@ import org.springframework.web.server.WebFilter;
 import com.kjpar0317.batch.auth.JwtTokenAuthenticationFilter;
 import com.kjpar0317.batch.auth.JwtTokenProvider;
 import com.kjpar0317.batch.auth.JwtUserInfo;
-import com.kjpar0317.batch.model.UsersEntity;
+import com.kjpar0317.batch.entity.UsersEntity;
 import com.kjpar0317.batch.repository.UsersRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -69,7 +69,7 @@ public class SecurityConfig {
 //	}
 
     @Bean
-    public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
 		return http.exceptionHandling(
 		exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint((exchange, ex) -> {
 			return Mono.fromRunnable(() -> {
@@ -122,7 +122,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public ReactiveUserDetailsService userDetailsService(UsersRepository userRepository) {
+	ReactiveUserDetailsService userDetailsService(UsersRepository userRepository) {
 		return username -> {
 			Optional<UsersEntity> usersEntity = userRepository.findById(username);
 
@@ -149,7 +149,7 @@ public class SecurityConfig {
 	}
 
 	@Bean
-	public ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
+	ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
 			PasswordEncoder passwordEncoder) {
 		var authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
 		authenticationManager.setPasswordEncoder(passwordEncoder);
