@@ -6,7 +6,8 @@ interface ServerSideGridProps {
   components?: any;
   columnDefs: any;
   defaultColDef: any;
-  rowHeight?: number | undefined;
+  rowHeight?: number;
+  itemPerPage?: number;
   suppressPaginationPanel?: boolean;
   onMutate: (params: any) => void;
   onGridReady?: (event: any) => void;
@@ -15,11 +16,13 @@ interface ServerSideGridProps {
 }
 
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
+  const { itemPerPage = 10 } = props;
   const [gridApi, setGridApi] = createSignal<any>();
+  const [pageSize] = createSignal<number>(itemPerPage);
 
   onCleanup(() => {
     // gridApi()?.destroy();
-    window.removeEventListener('resize', handleSizeColumnToFit);
+    window.removeEventListener("resize", handleSizeColumnToFit);
   });
 
   function handleGridReady(event: any) {
@@ -28,18 +31,19 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     const updateData = () => {
       const dataSource = {
         getRows: function (params: any) {
-          console.log(params);
           gridApi().showLoadingOverlay();
+
           props.onMutate(params);
         },
       };
+
       gridApi().setDatasource(dataSource);
     };
     updateData();
 
     event.api.sizeColumnsToFit();
 
-    window.addEventListener('resize', handleSizeColumnToFit);
+    window.addEventListener("resize", handleSizeColumnToFit);
 
     props.onGridReady && props.onGridReady(event);
   }
@@ -51,11 +55,12 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       gridApi()?.sizeColumnsToFit();
     });
   }
-  function handleGridSizeChanged() {
+  function handleGridSizeChanged(event: any) {
     handleSizeColumnToFit();
   }
   function handleGridPageChanged(event: any) {
     props.onPageChanged && props.onPageChanged(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
+    gridApi()?.hideOverlay();
   }
 
   return (
@@ -64,9 +69,12 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       components={props.components}
       columnDefs={props.columnDefs}
       defaultColDef={props.defaultColDef}
+      animateRows
       pagination
       rowHeight={props.rowHeight}
       headerHeight={props.rowHeight}
+      paginationPageSize={pageSize()}
+      cacheBlockSize={pageSize()}
       suppressPaginationPanel={props.suppressPaginationPanel}
       paginationAutoPageSize
       onGridReady={handleGridReady}
