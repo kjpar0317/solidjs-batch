@@ -5,7 +5,11 @@ import createLayout from "./createLayout";
 import createAuth from "./createAuth";
 import createBatch from "./createBatch";
 
-const StoreContext = createContext();
+type ActionType = Record<any, any>;
+type ContextStoreType = Record<string, any>;
+export type StoreType = ContextStoreType[];
+
+const StoreContext = createContext<StoreType>();
 
 export function Provider(props: { children: JSXElement }) {
   let layout: any, auth: any, batch: any;
@@ -23,9 +27,9 @@ export function Provider(props: { children: JSXElement }) {
     },
   });
 
-  const actions = {};
+  const actions: ActionType = {};
 
-  const store = [state, actions];
+  const store: StoreType = [state, actions];
 
   layout = createLayout(state, setState, actions);
   auth = createAuth(state, setState, actions);
@@ -39,5 +43,5 @@ export function Provider(props: { children: JSXElement }) {
 }
 
 export function useStore() {
-  return useContext(StoreContext);
+  return useContext(StoreContext) as StoreType;
 }
