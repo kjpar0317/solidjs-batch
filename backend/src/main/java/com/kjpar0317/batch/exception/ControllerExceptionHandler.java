@@ -10,9 +10,11 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.function.client.WebClientRequestException;
 
 import com.kjpar0317.batch.model.ErrorResponse;
 
+import jakarta.validation.ConstraintDeclarationException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -30,6 +32,11 @@ public class ControllerExceptionHandler {
         return new ResponseEntity<>(ErrorResponse.of(e.getErrorCode(), e.getErrorMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
     }
     
+    @ExceptionHandler(ConstraintDeclarationException.class)
+    public ResponseEntity<ErrorResponse> handleConstraintDeclarationException(ConstraintDeclarationException e) {
+    	return new ResponseEntity<>(ErrorResponse.of(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+    
     @ExceptionHandler(WebExchangeBindException.class)
     public ResponseEntity<List<String>> handleException(WebExchangeBindException e) {
         var errors = e.getBindingResult()
@@ -38,5 +45,11 @@ public class ControllerExceptionHandler {
                 .map(DefaultMessageSourceResolvable::getDefaultMessage)
                 .collect(Collectors.toList());
         return ResponseEntity.badRequest().body(errors);
+    }
+    
+    @ExceptionHandler(WebClientRequestException .class)
+    public ResponseEntity<ErrorResponse> handleWebClientRequestException(WebClientRequestException e) {
+    	return new ResponseEntity<>(ErrorResponse.of(HttpStatus.UNPROCESSABLE_ENTITY.value(), e.getMessage()), HttpStatus.UNPROCESSABLE_ENTITY);
+
     }
 }

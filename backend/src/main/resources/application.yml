@@ -19,12 +19,14 @@ dbconn:
     datasource:
         driver-class-name: org.mariadb.jdbc.Driver
         url: jdbc:mariadb://127.0.0.1:3306/test
-        username: lsdgsdf
-        password: 333 
+        username: test
+        password: test   
         hikari:
           auto-commit: false
           pool-name: pkj  
-          maximum-pool-size: 20 #  secondary:
+          minimum-idle: 10
+          maximum-pool-size: 20 
+#  secondary:
 #    datasource:
 #      driver-class-name: com.mysql.cj.jdbc.Driver
 #      url: jdbc:mysql://localhost:3308/SCHEMA_NAME?serverTimezone=UTC&characterEncoding=UTF-8
@@ -33,9 +35,6 @@ dbconn:
 
 server:
   port: 8080
-  error:
-    include-message: always
-    include-binding-errors: always
 
 security:
   jjwt:

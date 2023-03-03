@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+@Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/batch")
@@ -47,13 +49,18 @@ public class BatchController {
 		return Flux.just(Arrays.asList("1", "2", "3"));
 	}
 	
+//	@PostMapping("/play")
+//	public Mono<?> play(@RequestBody Mono<@Valid JobInfoEntity> jobInfo) throws CustomErrorException {
+//		return jobInfo.flatMap((f) -> {
+//			try {
+//				batchService.play(f);
+//			} catch (CustomErrorException e) {}
+//			return Mono.empty();
+//		}).onErrorMap(error -> new RuntimeException(error.getMessage()));
+//	}
 	@PostMapping("/play")
-	public Mono<?> play(@RequestBody Mono<@Valid JobInfoEntity> jobInfo) throws CustomErrorException {
-		return jobInfo.flatMap((f) -> {
-			try {
-				batchService.play(f);
-			} catch (CustomErrorException e) {}
-			return Mono.empty();
-		}).onErrorMap(error -> new RuntimeException("CustomErrorException"));
+	public Mono<?> play(@RequestBody @Valid JobInfoEntity jobInfo) throws CustomErrorException {
+		batchService.play(jobInfo);
+		return Mono.just("성공");
 	}
 }
