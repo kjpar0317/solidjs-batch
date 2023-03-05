@@ -23,6 +23,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.kjpar0317.batch.entity.CodeExplanationEntity;
 import com.kjpar0317.batch.entity.TmpCodeExplanationEntity;
+import com.kjpar0317.batch.job.listener.JobCompleteListener;
 import com.kjpar0317.batch.job.partitoner.TbCodeExplanationPartitoner;
 import com.kjpar0317.batch.repository.TbCodeExplanationRepository;
 import com.kjpar0317.batch.repository.TempTbCodeExplanationRepository;
@@ -38,6 +39,7 @@ public class MoveJpaPartitionerJob {
 	public final JobRepository jobRepository;
 	private final EntityManagerFactory entityManagerFactory;
 	private final PlatformTransactionManager transactionManager;
+	private final JobCompleteListener jobCompleteListener;
 	private final TbCodeExplanationRepository srcRepository;
 	private final TempTbCodeExplanationRepository targetRepository;
 	@Value("${batch.chunkSize}")
@@ -81,6 +83,7 @@ public class MoveJpaPartitionerJob {
         return new JobBuilder(JOB_NAME, jobRepository)
                 .start(masterStep())
                 .preventRestart()
+                .listener(jobCompleteListener)
                 .build();
     }
 	

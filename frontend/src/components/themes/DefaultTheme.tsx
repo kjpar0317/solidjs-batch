@@ -1,5 +1,5 @@
-import { Switch, Match } from "solid-js";
 import type { JSXElement } from "solid-js";
+import { onMount, onCleanup, createEffect, on, Switch, Match } from "solid-js";
 import { useNavigate } from "solid-start";
 
 import { useStore } from "~/store";
@@ -13,6 +13,24 @@ interface DefaultThemeProps {
 export default function DefaultTheme(props: DefaultThemeProps): JSXElement {
   const navigate = useNavigate();
   const [store, { setIsLogined }] = useStore();
+
+  onMount(() => store.websocket.connect());
+
+  onCleanup(() => store.websocket.disconnect());
+
+  createEffect(
+    on(
+      store.websocket?.socketState,
+      (ws: any) => {
+        if (ws === 3) {
+          store.websocket.disconnect();
+          console.log("websocket reconnect");
+          store.websocket.connect();
+        }
+      },
+      { defer: true }
+    )
+  );
 
   function isAuthenticated() {
     const accessToken =

@@ -10,18 +10,17 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.stereotype.Service;
 
+import jakarta.annotation.Resource;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Service
 public class ScheduleTaskService {
-
-	// Task Scheduler
-	TaskScheduler scheduler;
+	@Resource(name = "defaultTaskScheduler")
+	private final TaskScheduler scheduler;
 
 	// A map for keeping scheduled tasks
-	Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
-
-	public ScheduleTaskService(TaskScheduler scheduler) {
-		this.scheduler = scheduler;
-	}
+	private Map<String, ScheduledFuture<?>> jobsMap = new HashMap<>();
 
 	// Schedule Task to be executed every night at 00 or 12 am
 	public void addTaskToScheduler(String jobId, Runnable task, String cronExpression) {

@@ -6,6 +6,8 @@ spring:
       enabled: false
     jdbc:
       initialize-schema: always
+  main:
+    allow-bean-definition-overriding: true
 
 logging:
   level:

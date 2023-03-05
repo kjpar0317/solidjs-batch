@@ -83,7 +83,7 @@ public class SecurityConfig {
 //		.authenticationManager(reactiveAuthenticationManager)
 		.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
 		.authorizeExchange(exchange -> exchange.pathMatchers(HttpMethod.OPTIONS).permitAll()
-				.pathMatchers("/batch/login", "/batch/retoken").permitAll().anyExchange().authenticated())
+				.pathMatchers("/batch/login", "/batch/retoken", "/websocket").permitAll().anyExchange().authenticated())
 		.addFilterBefore((WebFilter) new JwtTokenAuthenticationFilter(jwtTokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
 		.build();
     }

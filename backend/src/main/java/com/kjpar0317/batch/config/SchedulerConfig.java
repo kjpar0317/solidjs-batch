@@ -2,10 +2,10 @@ package com.kjpar0317.batch.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import com.kjpar0317.batch.handler.JobHandler;
+import com.kjpar0317.batch.service.JobInfoService;
 import com.kjpar0317.batch.service.ScheduleTaskService;
 
 import lombok.RequiredArgsConstructor;
@@ -15,17 +15,13 @@ import lombok.RequiredArgsConstructor;
 @EnableScheduling
 public class SchedulerConfig  {
 	private final ScheduleTaskService service;
-	
-    @Bean
-    TaskScheduler taskScheduler() {
-        ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
-        threadPoolTaskScheduler.setPoolSize(500);
-        threadPoolTaskScheduler.setThreadNamePrefix("ThreadPoolTaskScheduler");
-        return threadPoolTaskScheduler;
-    }
+	private final JobHandler jobHandler;
+	private final JobInfoService jobInfoService;
     
     @Bean
     void startSchedule() {
-    	service.addTaskToScheduler("TestConfig", () -> {System.out.println("asdfasfd");}, "2 * * * * ?");
+    	jobInfoService.getJobInfoList()
+    		.filter(f -> "Y".equals(f.getUseYn()))
+    		.subscribe(s -> service.addTaskToScheduler(s.getJobId(), () -> jobHandler.startJob(s), s.getJobCronExpression()));
     }
 }
