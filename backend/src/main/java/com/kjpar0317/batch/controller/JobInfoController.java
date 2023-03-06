@@ -24,7 +24,7 @@ public class JobInfoController {
 	private final JobInfoService service;
 	
 	@PostMapping
-	public Flux<JobInfoEntity> getJobInfoList(@RequestBody JobInfoEntity entity) {
+	public Flux<JobInfoEntity> getJobInfoList() {
 		return service.getJobInfoList();
 	}
 	

@@ -1,5 +1,4 @@
 import axios from "axios";
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import toast from "solid-toast";
 
 const axiosUtils = axios.create({
@@ -8,18 +7,8 @@ const axiosUtils = axios.create({
   // timeout: 30000
 });
 
-const refreshAuthLogic = (failedRequest: any) =>
-    axios.post('/api/batch/retoken').then((res) => {
-        sessionStorage.setItem('token', res.data.token);
-        failedRequest.response.config.headers['Authorization'] = 'Bearer ' + res.data.token;
-        return Promise.resolve();
-    });
-
-// Instantiate the interceptor
-createAuthRefreshInterceptor(axiosUtils, refreshAuthLogic);
-
 async function responseValidate(error: any) {
-//   console.error(error.response);
+  console.error(error.response);
 
   // API 서버 접속 오류
   if (error.response.status === 404 || error.response.status === 504) {
@@ -27,21 +16,31 @@ async function responseValidate(error: any) {
     return "api server connection error";
   }
 
+  if (error.response.status === 401) {
+    const token = sessionStorage.getItem("token");
+    const res = await axios.post("/api/batch/retoken", null, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.data && res.data.token) {
+      sessionStorage.setItem("token", res.data.token);
+    } else {
+      toast.error("로그인이 만료되었습니다. 다시 로그인 해주세요.");
+      sessionStorage.clear();
+    }
+
+    setTimeout(() => {
+      window.location.replace("/");
+    }, 2000);
+  }
+
   if (error.response.data.message) {
     toast.error(error.response.data.message);
 
-    // if (error.response.status === 401) {
-    //   sessionStorage.removeItem("id");
-    //   sessionStorage.removeItem("token");
-
-    //   setTimeout(() => {
-    //     window.location.replace("/");
-    //   }, 2000);
-    // }
     return error.response.data.message;
   }
 
-   return error.response.status;
+  return error.response.status;
 }
 
 axiosUtils.interceptors.request.use(
@@ -49,7 +48,7 @@ axiosUtils.interceptors.request.use(
     const token = sessionStorage.getItem("token");
 
     if (token && config.headers) {
-      config.headers['Authorization'] = `Bearer ${token}`
+      config.headers["Authorization"] = `Bearer ${token}`;
       // config.headers["x-access-token"] = token;
     }
 

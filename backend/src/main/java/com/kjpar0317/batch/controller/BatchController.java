@@ -1,6 +1,5 @@
 package com.kjpar0317.batch.controller;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,13 +39,8 @@ public class BatchController {
 	}
 	
 	@PostMapping("/retoken")
-	public Mono<?> login() {
+	public Mono<?> retoken() {
 		return Mono.just("retoken 들어 옴");
-	}
-	
-	@GetMapping
-	public Flux<?> getBatchList() {
-		return Flux.just(Arrays.asList("1", "2", "3"));
 	}
 	
 //	@PostMapping("/play")
@@ -61,6 +55,24 @@ public class BatchController {
 	@PostMapping("/play")
 	public Mono<?> play(@RequestBody @Valid JobInfoEntity jobInfo) throws CustomErrorException {
 		batchService.play(jobInfo);
+		return Mono.just("성공");
+	}
+	
+	@PostMapping("/stop")
+	public Mono<?> stop(@RequestBody @Valid JobInfoEntity jobInfo) throws CustomErrorException {
+		batchService.stop(jobInfo);
+		return Mono.just("성공");
+	}
+	
+	@GetMapping("/startup")
+	public Mono<?> startup() {
+		batchService.startup();
+		return Mono.just("성공");
+	}
+	
+	@GetMapping("/shutdown")
+	public Mono<?> shutdown() {
+		batchService.shutdown();
 		return Mono.just("성공");
 	}
 }

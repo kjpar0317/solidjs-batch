@@ -9,5 +9,5 @@ export default function createBatch(state: any, setState: any, actions: any) {
         batchRefetch
     });
 
-    return batchList;
+    return { batchList };
 };
