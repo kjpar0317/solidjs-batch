@@ -1,14 +1,16 @@
 import type { JSXElement } from "solid-js";
-import { createSignal, createMemo, onMount } from "solid-js";
+import { createSignal, createMemo } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 
 import { useStore } from "~/store";
-import ConfirmModal from "~/components/modal/ConfirmModal";
+import Modal from "~/components/modal/Modal";
+import BatchDetail from "./details/BatchDetail";
 
 export function BatchManage(): JSXElement {
   const [store] = useStore();
   const [open, setOpen] = createSignal<boolean>(false);
   const [gridApi, setGridApi] = createSignal<any>(null);
+  const [rowData, setRowData] = createSignal<JobInfo | null>(null);
 
   const columnDefs = createMemo(() => [
     { field: "jobId", headerName: "배치ID" },
@@ -29,8 +31,17 @@ export function BatchManage(): JSXElement {
     sortable: true,
   }));
 
-  function handleGridReady(event: any) {
-    setGridApi(event.api);
+  function handleGridReady(params: any) {
+    setGridApi(params.api);
+  }
+  function handleGridClick(event: any) {
+    setOpen(true);
+    console.log(event);
+    setRowData(event.data);
+  }
+  function handleModalClose() {
+    setOpen(false);
+    setRowData(null);
   }
 
   return (
@@ -52,20 +63,23 @@ export function BatchManage(): JSXElement {
       </div>
       <div class="ag-theme-alpine w-full h-[calc(100vh_-_270px)] pt-2">
         <AgGridSolid
+          animateRows
           columnDefs={columnDefs()}
           rowData={batchList()}
           defaultColDef={defaultColDef()}
           pagination
           onGridReady={handleGridReady}
+          onCellClicked={handleGridClick}
         />
       </div>
-      <ConfirmModal
+      <Modal
+        title="배치 상세"
         open={open()}
-        onOk={() => setOpen(false)}
-        onClose={() => setOpen(false)}
+        onClose={handleModalClose}
+        hideActions
       >
-        정말 지우시겠습니까?
-      </ConfirmModal>
+        <BatchDetail {...rowData} />
+      </Modal>
     </div>
   );
 }

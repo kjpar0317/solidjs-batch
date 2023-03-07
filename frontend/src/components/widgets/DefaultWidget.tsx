@@ -1,6 +1,7 @@
 import type { JSXElement } from "solid-js";
 import { Switch, Match, lazy } from "solid-js";
 
+import { BarChart } from "../charts";
 import WidgetTitle from "./WidgetTitle";
 
 interface DefaultWidgetProps {
@@ -23,7 +24,9 @@ export default function DefaultWidget(props: DefaultWidgetProps): JSXElement {
       />
       <Switch>
         <Match when={props.module == "barDataLabel"}>
-          <div class="h-full mt-2"></div>
+          <div class="h-full mt-2">
+            <BarChart />
+          </div>
         </Match>
         <Match when={props.module == "candle"}>
           <div class="h-full mt-2"></div>

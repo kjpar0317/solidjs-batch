@@ -1,11 +1,12 @@
-import type { JSXElement, Signal } from "solid-js";
-import { createSignal, createEffect } from "solid-js";
+import type { JSXElement } from "solid-js";
+import { createSignal, createEffect, Show } from "solid-js";
 
 import { clickOutside, useOutSideClick } from "~/directives/clickOutside";
 
 interface ModalProps {
   title?: string;
   open: boolean;
+  hideActions?: boolean;
   children: JSXElement;
   onClose?: () => void;
 }
@@ -71,11 +72,16 @@ export default function Modal(props: ModalProps): JSXElement {
             <div class="max-h-[600px] border-t-2 pt-2 pl-2 border-base-300 border-b-gray-700 overflow-y-auto">
               {props.children}
             </div>
-            <div class="card-actions justify-end mb-2 pr-2">
-              <button class="btn btn-primary btn-outline" onClick={handleClose}>
-                Close
-              </button>
-            </div>
+            <Show when={!props.hideActions}>
+              <div class="card-actions justify-end mb-2 pr-2">
+                <button
+                  class="btn btn-primary btn-outline"
+                  onClick={handleClose}
+                >
+                  Close
+                </button>
+              </div>
+            </Show>
           </div>
         </div>
       </div>
