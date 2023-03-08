@@ -1,5 +1,7 @@
 package com.kjpar0317.batch.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.stereotype.Service;
 
 import com.kjpar0317.batch.entity.JobInfoEntity;
@@ -19,6 +21,10 @@ public class JobInfoService {
 	}
 	
 	public Mono<JobInfoEntity> saveJobInfo(JobInfoEntity entity) {
+		entity.setCreatedId("batch");
+		entity.setCreatedTime(LocalDateTime.now());
+		entity.setModifiedId("batch");
+		entity.setModifiedTime(LocalDateTime.now());
 		return Mono.fromCallable(() -> repository.save(entity));
 	}
 	

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.kjpar0317.batch.annotation.CheckRequired;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -27,8 +28,12 @@ public class JobInfoEntity {
 	private String jobParams;
 	private String errorSkipYn;
 	private String useYn;
+	@Column(insertable=true, updatable=false)
 	private String createdId;
+	@Column(insertable=true, updatable=false)
 	private LocalDateTime createdTime;
+	@Column(insertable=false, updatable=true)
 	private String modifiedId;
+	@Column(insertable=false, updatable=true)
 	private LocalDateTime modifiedTime;
 }

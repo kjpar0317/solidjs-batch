@@ -7,7 +7,7 @@ import Modal from "~/components/modal/Modal";
 import BatchDetail from "./details/BatchDetail";
 
 export function BatchManage(): JSXElement {
-  const [store] = useStore();
+  const [store, { batchRefetch }] = useStore();
   const [open, setOpen] = createSignal<boolean>(false);
   const [gridApi, setGridApi] = createSignal<any>(null);
   const [rowData, setRowData] = createSignal<JobInfo | null>(null);
@@ -36,12 +36,17 @@ export function BatchManage(): JSXElement {
   }
   function handleGridClick(event: any) {
     setOpen(true);
-    console.log(event);
     setRowData(event.data);
   }
   function handleModalClose() {
     setOpen(false);
     setRowData(null);
+  }
+  function handleDetailChange() {
+    setOpen(false);
+    setTimeout(() => {
+      batchRefetch();
+    }, 500);
   }
 
   return (
@@ -78,7 +83,7 @@ export function BatchManage(): JSXElement {
         onClose={handleModalClose}
         hideActions
       >
-        <BatchDetail {...rowData} />
+        <BatchDetail {...rowData} onChange={handleDetailChange} />
       </Modal>
     </div>
   );

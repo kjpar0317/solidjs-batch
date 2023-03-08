@@ -34,16 +34,16 @@ export default function Modal(props: ModalProps): JSXElement {
     <div
       class="modal"
       classList={{
-        modal: true,
+        // modal: true,
         "modal-open": props.open,
         "!visible": isVisible(),
       }}
       use:clickOutside={() => handleClose()}
     >
-      <div class="modal-box min-w-[300px] max-w-auto">
-        <div class="card glass bg-base-100 text-base-content">
-          <div class="card-body">
-            <div class="justify-between">
+      <div class="modal-box-custom">
+        <div class="card bg-base-100 text-base-content w-full">
+          <div class="card-body w-full">
+            <div class="justify-between w-full">
               <div class="flex float-left">
                 <h2 class="card-title pt-2 pl-5">{props.title}</h2>
               </div>
@@ -69,11 +69,11 @@ export default function Modal(props: ModalProps): JSXElement {
                 </button>
               </div>
             </div>
-            <div class="max-h-[600px] border-t-2 pt-2 pl-2 border-base-300 border-b-gray-700 overflow-y-auto">
+            <div class="w-full border-t-2 pt-2 pl-2 border-base-300 border-b-gray-700 overflow-y-auto">
               {props.children}
             </div>
             <Show when={!props.hideActions}>
-              <div class="card-actions justify-end mb-2 pr-2">
+              <div class="card-actions justify-end mb-2 pr-2 w-full">
                 <button
                   class="btn btn-primary btn-outline"
                   onClick={handleClose}
