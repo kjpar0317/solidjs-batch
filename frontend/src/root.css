@@ -120,3 +120,7 @@ body {
   box-shadow: 0 25px 50px -12px rgb(0 0 0 / 25%);
   overflow-y: hidden !important;
 }
+
+.ͼ2 .cm-content {
+  caret-color: hsl(var(--bc)/var(--tw-text-opacity)) !important;
+}

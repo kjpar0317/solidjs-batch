@@ -18,6 +18,6 @@ export default defineConfig({
   },
   optimizeDeps: {
     // Add both @codemirror/state and @codemirror/view to included deps to optimize
-    include: ["@codemirror/state", "@codemirror/view", "@codemirror/command", "@codemirror/lang-json"],
+    include: ["@codemirror/state", "@codemirror/view", "@codemirror/commands", "@codemirror/lang-json"],
   }
 });
