@@ -5,7 +5,9 @@ import reporter from "@felte/reporter-tippy";
 import { validator } from "@felte/validator-yup";
 import * as yup from "yup";
 import { forEach } from "lodash";
-import { createCodeMirror } from "solid-codemirror";
+import { createCodeMirror, createEditorControlledValue  } from "solid-codemirror";
+import { EditorView, keymap, lineNumbers } from '@codemirror/view';
+import { indentWithTab } from "@codemirror/commands";
 
 import { INIT_JOB_INFO } from "~/constants";
 import { useStore } from "~/store";
@@ -41,7 +43,7 @@ export default function BatchDetail(props: BatchDetailProps): JSXElement {
     },
     extend: [validator({ schema }), reporter()], // OR `extend: [validator({ schema })],`
   });
-  const { editorView, ref: editorRef } = createCodeMirror({
+  const { ref: editorRef, createExtension } = createCodeMirror({
     // The initial value of the editor
     value: jsonTxt(),
     // Fired whenever the editor code value changes.
@@ -51,6 +53,20 @@ export default function BatchDetail(props: BatchDetailProps): JSXElement {
     //   console.log("modelView updated", modelView),
   });
 
+   const theme = EditorView.theme({
+    '&': {
+      background: 'red'
+    }
+  });
+ 
+  createExtension(theme);
+
+  // Toggle extension
+  createExtension(() => showLineNumber() ? lineNumbers() : []);
+  // [keymap.of([indentWithTab]), json()]
+  createEditorControlledValue(editorView, props.jsonParams);
+  
+  
   createEffect(() => {
     if (cloneProps() && cloneProps().jobId) {
       const { onChange, ...rest } = cloneProps();
