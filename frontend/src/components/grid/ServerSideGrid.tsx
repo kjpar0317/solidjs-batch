@@ -1,6 +1,8 @@
 import type { JSXElement } from "solid-js";
-import { createSignal, onCleanup } from "solid-js";
+import { createSignal, createEffect, onCleanup } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
+
+import type { GridReadyEvent, CellClickedEvent, GridSizeChangedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi } from "typings/aggrid";
 
 interface ServerSideGridProps {
   components?: any;
@@ -9,35 +11,51 @@ interface ServerSideGridProps {
   rowHeight?: number;
   itemPerPage?: number;
   suppressPaginationPanel?: boolean;
-  onMutate: (params: any) => void;
-  onGridReady?: (event: any) => void;
-  onGridClick?: (event: any) => void;
+  suppressMultiSort?: boolean;
+  quickFilterModel?: any;
+  onMutate: (params: IGetRowsParams) => void;
+  onGridReady?: (event: GridReadyEvent) => void;
+  onGridClick?: (event: CellClickedEvent) => void;
   onPageChanged?: (page: number, totPage: number) => void;
 }
 
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   const { itemPerPage = 10 } = props;
-  const [gridApi, setGridApi] = createSignal<any>();
-  const [pageSize] = createSignal<number>(itemPerPage);
+  const [gridApi, setGridApi] = createSignal<IGridApi>();
+  const [pageSize, setPageSize] = createSignal<number>(itemPerPage);
+  const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
+
+  createEffect(() => {
+    if (props.quickFilterModel) {
+      gridApi()?.purgeInfiniteCache();
+      setQuickFilterModel(props.quickFilterModel);
+    }
+  });
 
   onCleanup(() => {
     // gridApi()?.destroy();
     window.removeEventListener("resize", handleSizeColumnToFit);
   });
 
-  function handleGridReady(event: any) {
+  function handleGridReady(event: GridReadyEvent) {
     setGridApi(event.api);
 
     const updateData = () => {
       const dataSource = {
-        getRows: function (params: any) {
-          gridApi().showLoadingOverlay();
+        getRows: function (params: IGetRowsParams) {
+          if (quickFilterModel()) {
+            params = { ...params, filterModel: quickFilterModel() };
+          }
 
-          props.onMutate(params);
+          gridApi()?.showLoadingOverlay();
+
+          setTimeout(() => {
+            props.onMutate(params);
+          }, 200);
         },
       };
 
-      gridApi().setDatasource(dataSource);
+      gridApi()?.setDatasource(dataSource);
     };
     updateData();
 
@@ -47,7 +65,7 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
 
     props.onGridReady && props.onGridReady(event);
   }
-  function handleGridClick(event: any) {
+  function handleGridClick(event: CellClickedEvent) {
     props.onGridClick && props.onGridClick(event);
   }
   function handleSizeColumnToFit() {
@@ -55,10 +73,7 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       gridApi()?.sizeColumnsToFit();
     });
   }
-  function handleGridSizeChanged(event: any) {
-    handleSizeColumnToFit();
-  }
-  function handleGridPageChanged(event: any) {
+  function handleGridPageChanged(event: PaginationChangedEvent) {
     props.onPageChanged && props.onPageChanged(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
     gridApi()?.hideOverlay();
   }
@@ -76,10 +91,11 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       paginationPageSize={pageSize()}
       cacheBlockSize={pageSize()}
       suppressPaginationPanel={props.suppressPaginationPanel}
+      suppressMultiSort={props.suppressMultiSort}
+      multiSortKey="ctrl"
       paginationAutoPageSize
       onGridReady={handleGridReady}
       onCellClicked={handleGridClick}
-      onGridSizeChanged={handleGridSizeChanged}
       onPaginationChanged={handleGridPageChanged}
     />
   );
