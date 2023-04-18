@@ -1,8 +1,10 @@
 import type { JSXElement } from "solid-js";
 import { createSignal, createEffect, onCleanup } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
+import { debounce } from "lodash";
 
-import type { GridReadyEvent, CellClickedEvent, GridSizeChangedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi } from "typings/aggrid";
+import type { GridReadyEvent, CellClickedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi } from "typings/aggrid";
+import { GridSizeChangedEvent } from "ag-grid-community";
 
 interface ServerSideGridProps {
   components?: any;
@@ -22,7 +24,6 @@ interface ServerSideGridProps {
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   const { itemPerPage = 10 } = props;
   const [gridApi, setGridApi] = createSignal<IGridApi>();
-  const [pageSize, setPageSize] = createSignal<number>(itemPerPage);
   const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
 
   createEffect(() => {
@@ -69,13 +70,20 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     props.onGridClick && props.onGridClick(event);
   }
   function handleSizeColumnToFit() {
-    setTimeout(function () {
+    debounce(() => {
+      gridApi()?.purgeInfiniteCache();
       gridApi()?.sizeColumnsToFit();
-    });
+    }, 500);
   }
   function handleGridPageChanged(event: PaginationChangedEvent) {
     props.onPageChanged && props.onPageChanged(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
     gridApi()?.hideOverlay();
+  }
+  function handleGridSizeChanged(event: GridSizeChangedEvent) {
+    const gridHeight = event.clientHeight - ((props.rowHeight && props.rowHeight) || 48) - ((props.suppressPaginationPanel && 17) || 65);
+    const rowNum = Math.trunc(gridHeight / ((props.rowHeight && props.rowHeight) || 48));
+
+    gridApi()?.paginationSetPageSize(rowNum);
   }
 
   return (
@@ -88,8 +96,8 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       pagination
       rowHeight={props.rowHeight}
       headerHeight={props.rowHeight}
-      paginationPageSize={pageSize()}
-      cacheBlockSize={pageSize()}
+      paginationPageSize={itemPerPage}
+      cacheBlockSize={itemPerPage}
       suppressPaginationPanel={props.suppressPaginationPanel}
       suppressMultiSort={props.suppressMultiSort}
       multiSortKey="ctrl"
@@ -97,6 +105,7 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       onGridReady={handleGridReady}
       onCellClicked={handleGridClick}
       onPaginationChanged={handleGridPageChanged}
+      onGridSizeChanged={handleGridSizeChanged}
     />
   );
 }
