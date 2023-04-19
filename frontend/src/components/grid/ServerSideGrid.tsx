@@ -83,15 +83,9 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     gridApi()?.hideOverlay();
   }
   function handleGridSizeChanged(event: GridSizeChangedEvent) {
-    debounce(
-      () => {
-        const pageSize = calcPageSize(event.clientHeight);
-        gridApi()?.paginationSetPageSize(pageSize);
-        setPageSize(pageSize);
-      },
-      500,
-      { leading: true }
-    );
+    const pageSize = calcPageSize(event.clientHeight);
+    gridApi()?.paginationSetPageSize(pageSize);
+    setPageSize(pageSize);
   }
   function setPageSizeChange(api: IGridApi) {
     if (props.offsetHeight) {
