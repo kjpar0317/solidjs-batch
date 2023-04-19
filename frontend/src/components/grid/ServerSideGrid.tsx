@@ -23,6 +23,7 @@ interface ServerSideGridProps {
 }
 
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
+  const { rowHeight = 48 } = props;
   const [gridApi, setGridApi] = createSignal<IGridApi>();
   const [pageSize, setPageSize] = createSignal<number>((props.itemPerPage && props.itemPerPage) || 0);
   const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
@@ -82,20 +83,31 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     gridApi()?.hideOverlay();
   }
   function handleGridSizeChanged(event: GridSizeChangedEvent) {
-    const gridHeight = event.clientHeight - ((props.rowHeight && props.rowHeight) || 40) - ((props.suppressPaginationPanel && 17) || 65);
-    const rowNum = Math.trunc(gridHeight / ((props.rowHeight && props.rowHeight) || 40));
-
-    gridApi()?.paginationSetPageSize(rowNum);
-    setPageSize(rowNum);
+    debounce(
+      () => {
+        const pageSize = calcPageSize(event.clientHeight);
+        gridApi()?.paginationSetPageSize(pageSize);
+        setPageSize(pageSize);
+      },
+      500,
+      { leading: true }
+    );
   }
-
   function setPageSizeChange(api: IGridApi) {
     if (props.offsetHeight) {
-      const gridHeight = props.offsetHeight - 48 - ((props.rowHeight && props.rowHeight) || 40) - ((props.suppressPaginationPanel && 17) || 65);
-      const rowNum = Math.trunc(gridHeight / ((props.rowHeight && props.rowHeight) || 40)) + 1;
-      api.paginationSetPageSize(rowNum);
-      setPageSize(rowNum);
+      const pageSize = calcPageSize(props.offsetHeight);
+      api.paginationSetPageSize(pageSize);
+      setPageSize(pageSize);
     }
+  }
+  function calcPageSize(clientHeight: number) {
+    // console.log(clientHeight);
+    const gridHeight = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
+    // console.log(gridHeight);
+    // console.log(gridHeight / rowHeight);
+    const rowNum = Math.round(gridHeight / rowHeight) - 1;
+    // console.log(rowNum);
+    return rowNum;
   }
 
   return (
@@ -106,8 +118,8 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       defaultColDef={props.defaultColDef}
       animateRows
       pagination
-      rowHeight={props.rowHeight}
-      headerHeight={props.rowHeight}
+      rowHeight={rowHeight}
+      headerHeight={rowHeight}
       cacheBlockSize={pageSize()}
       // maxBlocksInCache={1}
       suppressPaginationPanel={props.suppressPaginationPanel}
