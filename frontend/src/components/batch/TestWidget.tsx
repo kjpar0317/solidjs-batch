@@ -17,7 +17,7 @@ export function TestWidget(): JSXElement {
             <div class="flex space-x-4 mt-4">
               <button
                 class="block uppercase mx-auto shadow bg-white text-indigo-600 focus:shadow-outline 
-                    focus:outline-none text-white text-xs py-3 px-4 rounded font-bold"
+                    focus:outline-none text-xs py-3 px-4 rounded font-bold"
               >
                 Transfer
               </button>
@@ -45,9 +45,7 @@ export function TestWidget(): JSXElement {
               <p>Finished Appt</p>
             </div>
             <h3 class="text-white text-3xl mt-2 font-bold">120</h3>
-            <h3 class="text-white text-lg mt-2 text-yellow-100 ">
-              4 not confirmed
-            </h3>
+            <h3 class="text-lg mt-2 text-yellow-100 ">4 not confirmed</h3>
           </div>
         </div>
       </div>

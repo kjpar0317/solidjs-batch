@@ -82,7 +82,8 @@ export default function BatchDetail(props: BatchDetailProps): JSXElement {
   }
 
   return (
-    <div class="md:min-w-[400px] w-screen md:w-3/4 lg:min-w-[1000px] h-[650px] mr-2">
+    // <div class="md:min-w-[400px] w-screen md:w-3/4 lg:min-w-[1000px] h-[650px] mr-2">
+    <div class="w-full">
       <form ref={form}>
         <div class="grid gap-6 mb-6 lg:grid-cols-2">
           <div>

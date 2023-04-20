@@ -1,15 +1,16 @@
 import type { JSXElement } from "solid-js";
-import { createSignal, createMemo } from "solid-js";
+import { createSignal, createMemo, onMount } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
 
+import type { IGridApi } from "typings/aggrid";
 import { useStore } from "~/store";
 import Modal from "~/components/modal/Modal";
 import BatchDetail from "./details/BatchDetail";
 
 export function BatchManage(): JSXElement {
-  const [store, { batchRefetch }] = useStore();
+  const [store, { batchRefetch, setInitBatch }] = useStore();
   const [open, setOpen] = createSignal<boolean>(false);
-  const [gridApi, setGridApi] = createSignal<any>(null);
+  const [gridApi, setGridApi] = createSignal<IGridApi>();
   const [rowData, setRowData] = createSignal<JobInfo | null>(null);
 
   const columnDefs = createMemo(() => [
@@ -30,6 +31,10 @@ export function BatchManage(): JSXElement {
     filter: true,
     sortable: true,
   }));
+
+  onMount(() => {
+    setInitBatch(true);
+  });
 
   function handleGridReady(params: any) {
     setGridApi(params.api);
@@ -81,7 +86,7 @@ export function BatchManage(): JSXElement {
         title="배치 상세"
         open={open()}
         onClose={handleModalClose}
-        hideActions
+        dismissActionArea
       >
         <BatchDetail {...rowData} onChange={handleDetailChange} />
       </Modal>

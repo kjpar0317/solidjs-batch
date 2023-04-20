@@ -9,7 +9,7 @@ interface ModalProps {
 }
 
 export default function Modal(props: ModalProps): JSXElement {
-  const [isVisible, setVisibility] = createSignal(props.open);
+  const [isVisible, setVisibility] = createSignal<boolean>(props.open);
 
   createEffect(() => {
     if (props.open) {

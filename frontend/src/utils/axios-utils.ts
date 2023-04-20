@@ -8,13 +8,13 @@ const axiosUtils = axios.create({
 });
 
 async function responseValidate(error: any) {
-  console.error(error.response);
-
   // API 서버 접속 오류
-  if (error.response.status === 404 || error.response.status === 504) {
+  if (!error.response || error.response.status === 404 || error.response.status === 504) {
     toast.error("API 서버 연결 오류");
     return "api server connection error";
   }
+
+  console.error(error.response);
 
   if (error.response.status === 401) {
     const token = sessionStorage.getItem("token");
