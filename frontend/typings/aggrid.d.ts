@@ -1,10 +1,20 @@
 import type { Column, ColDef, IRowNode, GridApi, ColumnApi } from "ag-grid-community";
 
 export type TData = any;
+export type TContext = any;
 export type RowPinnedType = "top" | "bottom" | null | undefined;
+export type TContextInAction = any;
 
 export interface IGridApi extends GridApi {}
 export interface IColDef extends ColDef {}
+
+export interface FilterModelItem {
+  type: string;
+  filterType: string;
+  filter?: string | number;
+  dateFrom?: string;
+  dateTo?: string;
+}
 
 export interface GridReadyEvent<TData = any, TContext = any> {
   // The grid api.
@@ -91,7 +101,7 @@ export interface IGetRowsParams {
   // If doing server side sorting, contains the sort model
   sortModel: SortModelItem[];
   // If doing server side filtering, contains the filter model
-  filterModel: any;
+  filterModel: FilterModelItem[];
   // The context as provided on `gridOptions.context`
   context: any;
 }
@@ -101,4 +111,12 @@ export interface SortModelItem {
   colId: string;
   // Sort direction
   sort: "asc" | "desc";
+}
+
+export interface GridPageInfo {
+  page: number;
+  itemInPage: number;
+  filters?: FilterModelItem[];
+  orderBy?: SortModelItem[];
+  successCallback?: ((rowsThisBlock: any[], lastRow?: number | undefined) => void) | undefined;
 }
