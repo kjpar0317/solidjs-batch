@@ -4,17 +4,7 @@ import { createSignal, createEffect, createMemo, on, onCleanup } from "solid-js"
 import AgGridSolid from "ag-grid-solid";
 import { createScheduled, throttle, type Scheduled } from "@solid-primitives/scheduled";
 
-import type {
-  GridReadyEvent,
-  CellClickedEvent,
-  PaginationChangedEvent,
-  IGetRowsParams,
-  IGridApi,
-  IColDef,
-  TContext,
-  TData,
-  FilterModelItem,
-} from "typings/aggrid";
+import type { GridReadyEvent, CellClickedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi, IColDef, TContext, FilterModelItem } from "typings/aggrid";
 import LoadingSkeletonColumn from "~/components/grid/LoadingSkeletonColumn";
 
 interface ServerSideGridProps {
@@ -22,8 +12,6 @@ interface ServerSideGridProps {
   columnDefs: IColDef[];
   defaultColDef: IColDef;
   rowHeight?: number;
-  itemPerPage?: number; // autoHeight계산인 경우 필요없음, 아닌 경우 필수
-  offsetHeight?: number; // autoHeight 계산인 경우만 필요, 앞에 div ref의 offsetHeight를 넣어야 함
   suppressPaginationPanel?: boolean;
   suppressMultiSort?: boolean;
   quickFilterModel?: FilterModelItem;
@@ -37,9 +25,6 @@ interface ServerSideGridProps {
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   const { rowHeight = 46 } = props;
   const [gridApi, setGridApi] = createSignal<IGridApi>();
-  const [cacheBlockSize, setCahceBlockSize] = createSignal<number>(
-    (props.itemPerPage && props.itemPerPage) || (props.offsetHeight && calcPageSize(props.offsetHeight)) || 0
-  );
   const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
   const [inHeight, setInHeight] = createSignal<number>(0);
   const throttleGridSizeFit: Accessor<boolean> = createScheduled(
@@ -67,6 +52,7 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       return props.defaultColDef;
     }
   });
+  const cacheBlockSize = createMemo(() => calcPageSize(inHeight()));
 
   createEffect(
     on(inHeight, (next: number, prev: number | undefined) => {
@@ -106,7 +92,7 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
 
   function handleGridReady(event: GridReadyEvent): void {
     setGridApi(event.api);
-    setPageSizeChange(event.api);
+    // setPageSizeChange(event.api);
 
     updateGridData();
 
@@ -125,15 +111,14 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     const pageSize: number = calcPageSize(event.clientHeight);
     setInHeight(event.clientHeight);
     gridApi()?.paginationSetPageSize(pageSize);
-    setCahceBlockSize(pageSize);
   }
-  function setPageSizeChange(api: IGridApi): void {
-    if (props.offsetHeight) {
-      const pageSize: number = calcPageSize(props.offsetHeight);
-      api.paginationSetPageSize(pageSize);
-      setCahceBlockSize(pageSize);
-    }
-  }
+  // function setPageSizeChange(api: IGridApi): void {
+  //   if (props.offsetHeight) {
+  //     const pageSize: number = calcPageSize(props.offsetHeight);
+  //     api.paginationSetPageSize(pageSize);
+  //     setCahceBlockSize(pageSize);
+  //   }
+  // }
   function calcPageSize(clientHeight: number): number {
     // console.log(clientHeight);
     const gridHeight: number = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
