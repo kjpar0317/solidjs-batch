@@ -1,21 +1,33 @@
-import type { JSXElement } from "solid-js";
-import { createSignal, createEffect, onCleanup } from "solid-js";
+import type { JSXElement, Accessor } from "solid-js";
+import type { GridSizeChangedEvent } from "ag-grid-community";
+import { createSignal, createEffect, createMemo, on, onCleanup } from "solid-js";
 import AgGridSolid from "ag-grid-solid";
-import { debounce } from "lodash";
+import { createScheduled, throttle, type Scheduled } from "@solid-primitives/scheduled";
 
-import type { GridReadyEvent, CellClickedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi } from "typings/aggrid";
-import { GridSizeChangedEvent } from "ag-grid-community";
+import type {
+  GridReadyEvent,
+  CellClickedEvent,
+  PaginationChangedEvent,
+  IGetRowsParams,
+  IGridApi,
+  IColDef,
+  TContext,
+  TData,
+  FilterModelItem,
+} from "typings/aggrid";
+import LoadingSkeletonColumn from "~/components/grid/LoadingSkeletonColumn";
 
 interface ServerSideGridProps {
-  components?: any;
-  columnDefs: any;
-  defaultColDef: any;
+  components?: TContext;
+  columnDefs: IColDef[];
+  defaultColDef: IColDef;
   rowHeight?: number;
   itemPerPage?: number; // autoHeight계산인 경우 필요없음, 아닌 경우 필수
   offsetHeight?: number; // autoHeight 계산인 경우만 필요, 앞에 div ref의 offsetHeight를 넣어야 함
   suppressPaginationPanel?: boolean;
   suppressMultiSort?: boolean;
-  quickFilterModel?: any;
+  quickFilterModel?: FilterModelItem;
+  skeleton?: boolean;
   onMutate: (params: IGetRowsParams) => void;
   onGridReady?: (event: GridReadyEvent) => void;
   onGridClick?: (event: CellClickedEvent) => void;
@@ -23,83 +35,111 @@ interface ServerSideGridProps {
 }
 
 export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
-  const { rowHeight = 48 } = props;
+  const { rowHeight = 46 } = props;
   const [gridApi, setGridApi] = createSignal<IGridApi>();
-  const [pageSize, setPageSize] = createSignal<number>((props.itemPerPage && props.itemPerPage) || 0);
+  const [cacheBlockSize, setCahceBlockSize] = createSignal<number>(
+    (props.itemPerPage && props.itemPerPage) || (props.offsetHeight && calcPageSize(props.offsetHeight)) || 0
+  );
   const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
+  const [inHeight, setInHeight] = createSignal<number>(0);
+  const throttleGridSizeFit: Accessor<boolean> = createScheduled(
+    (): Scheduled<[]> =>
+      throttle((): void | undefined => {
+        updateGridData();
+        gridApi()?.sizeColumnsToFit();
+      }, 500)
+  );
+  const defComponents: Accessor<any> = createMemo((): any => {
+    if (props.skeleton) {
+      if (props.components) {
+        return { ...props.components, LoadingSkeletonColumn: LoadingSkeletonColumn };
+      } else {
+        return { LoadingSkeletonColumn: LoadingSkeletonColumn };
+      }
+    } else {
+      return props.components;
+    }
+  });
+  const defColDef: Accessor<IColDef> = createMemo((): IColDef => {
+    if (props.skeleton) {
+      return { ...props.defaultColDef, cellRenderer: LoadingSkeletonColumn };
+    } else {
+      return props.defaultColDef;
+    }
+  });
 
-  createEffect(() => {
+  createEffect(
+    on(inHeight, (next: number, prev: number | undefined) => {
+      if (prev && prev !== next) {
+        throttleGridSizeFit();
+      }
+    })
+  );
+  createEffect((): void => {
     if (props.quickFilterModel) {
       gridApi()?.purgeInfiniteCache();
       setQuickFilterModel(props.quickFilterModel);
     }
   });
 
-  onCleanup(() => {
-    // gridApi()?.destroy();
-    window.removeEventListener("resize", handleSizeColumnToFit);
+  onCleanup((): void => {
+    gridApi()?.destroy();
   });
 
-  function handleGridReady(event: GridReadyEvent) {
+  function updateGridData(): void {
+    const dataSource = {
+      getRows: function (params: IGetRowsParams): void {
+        gridApi()?.showLoadingOverlay();
+
+        setTimeout((): void => {
+          if (quickFilterModel()) {
+            params = { ...params, filterModel: quickFilterModel() };
+          }
+
+          props.onMutate(params);
+        }, 0);
+      },
+    };
+
+    gridApi()?.setDatasource(dataSource);
+  }
+
+  function handleGridReady(event: GridReadyEvent): void {
     setGridApi(event.api);
     setPageSizeChange(event.api);
 
-    const updateData = () => {
-      const dataSource = {
-        getRows: function (params: IGetRowsParams) {
-          gridApi()?.showLoadingOverlay();
-
-          setTimeout(() => {
-            if (quickFilterModel()) {
-              params = { ...params, filterModel: quickFilterModel() };
-            }
-
-            props.onMutate(params);
-          }, 200);
-        },
-      };
-
-      gridApi()?.setDatasource(dataSource);
-    };
-    updateData();
+    updateGridData();
 
     event.api.sizeColumnsToFit();
 
-    window.addEventListener("resize", handleSizeColumnToFit);
-
     props.onGridReady && props.onGridReady(event);
   }
-  function handleGridClick(event: CellClickedEvent) {
+  function handleGridClick(event: CellClickedEvent): void {
     props.onGridClick && props.onGridClick(event);
   }
-  function handleSizeColumnToFit() {
-    debounce(() => {
-      gridApi()?.purgeInfiniteCache();
-      gridApi()?.sizeColumnsToFit();
-    }, 500);
-  }
-  function handleGridPageChanged(event: PaginationChangedEvent) {
+  function handleGridPageChanged(event: PaginationChangedEvent): void {
     props.onPageChanged && props.onPageChanged(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
     gridApi()?.hideOverlay();
   }
-  function handleGridSizeChanged(event: GridSizeChangedEvent) {
-    const pageSize = calcPageSize(event.clientHeight);
+  function handleGridSizeChanged(event: GridSizeChangedEvent): void {
+    const pageSize: number = calcPageSize(event.clientHeight);
+    setInHeight(event.clientHeight);
     gridApi()?.paginationSetPageSize(pageSize);
-    setPageSize(pageSize);
+    setCahceBlockSize(pageSize);
   }
-  function setPageSizeChange(api: IGridApi) {
+  function setPageSizeChange(api: IGridApi): void {
     if (props.offsetHeight) {
-      const pageSize = calcPageSize(props.offsetHeight);
+      const pageSize: number = calcPageSize(props.offsetHeight);
       api.paginationSetPageSize(pageSize);
-      setPageSize(pageSize);
+      setCahceBlockSize(pageSize);
     }
   }
-  function calcPageSize(clientHeight: number) {
+  function calcPageSize(clientHeight: number): number {
     // console.log(clientHeight);
-    const gridHeight = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
+    const gridHeight: number = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
     // console.log(gridHeight);
     // console.log(gridHeight / rowHeight);
-    const rowNum = Math.round(gridHeight / rowHeight) - 1;
+    const rowNum: number = Math.round(gridHeight / rowHeight) - 1;
     // console.log(rowNum);
     return rowNum;
   }
@@ -107,15 +147,16 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   return (
     <AgGridSolid
       rowModelType="infinite"
-      components={props.components}
+      components={defComponents()}
       columnDefs={props.columnDefs}
-      defaultColDef={props.defaultColDef}
+      defaultColDef={defColDef()}
       animateRows
       pagination
       rowHeight={rowHeight}
       headerHeight={rowHeight}
-      cacheBlockSize={pageSize()}
-      // maxBlocksInCache={1}
+      cacheBlockSize={cacheBlockSize()}
+      infiniteInitialRowCount={props.skeleton ? cacheBlockSize() : 1}
+      maxConcurrentDatasourceRequests={1}
       suppressPaginationPanel={props.suppressPaginationPanel}
       suppressMultiSort={props.suppressMultiSort}
       multiSortKey="ctrl"
