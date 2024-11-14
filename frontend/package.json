@@ -29,7 +29,7 @@
     "axios": "^1.7.7",
     "daisyui": "^4.12.14",
     "echarts": "^5.5.1",
-    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21",
     "solid-ag-grid": "^0.0.100",
     "solid-codemirror": "^2.3.1",
     "solid-gridstack": "^0.0.4",

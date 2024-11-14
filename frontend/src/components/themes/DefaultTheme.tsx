@@ -53,24 +53,22 @@ export default function DefaultTheme(
 
   return (
     <div data-theme={store.layout.theme()} class="w-full h-full">
-      {isClient && (
-        <Switch>
-          <Match when={isAuthenticated()}>
-            <Header />
-            <Sidebar />
-            <main
-              class="relative w-full overflow-y-auto border-base-300 bg-base-200 pt-20 text-base-content h-[calc(100vh_-_70px)] lg:ml-64 lg:w-[calc(100%_-_16rem)]"
-              classList={{ "w-full": !store.layout.sidebar() }}
-            >
-              {props.children}
-            </main>
-            <Footer />
-          </Match>
-          <Match when={!isAuthenticated()}>
-            <Login />
-          </Match>
-        </Switch>
-      )}
+      <Switch>
+        <Match when={isAuthenticated()}>
+          <Header />
+          <Sidebar />
+          <main
+            class="relative w-full overflow-y-auto border-base-300 bg-base-200 pt-20 text-base-content h-[calc(100vh_-_70px)] lg:ml-64 lg:w-[calc(100%_-_16rem)]"
+            classList={{ "w-full": !store.layout.sidebar() }}
+          >
+            {props.children}
+          </main>
+          <Footer />
+        </Match>
+        <Match when={!isAuthenticated()}>
+          <Login />
+        </Match>
+      </Switch>
     </div>
   );
 }

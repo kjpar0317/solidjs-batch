@@ -22,7 +22,7 @@ async function responseValidate(error: any): Promise<any> {
     error.response.status === 404 ||
     error.response.status === 504
   ) {
-    toast.error("API 서버 연결 오류");
+    // toast.error("API 서버 연결 오류");
     return !error.response ? 500 : error.response.status;
   }
 

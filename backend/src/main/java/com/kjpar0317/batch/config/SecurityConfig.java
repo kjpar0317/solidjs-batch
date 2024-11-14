@@ -23,7 +23,6 @@ import org.springframework.security.web.server.context.NoOpServerSecurityContext
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.server.WebFilter;
 
 import com.kjpar0317.batch.auth.JwtTokenAuthenticationFilter;
 import com.kjpar0317.batch.auth.JwtTokenProvider;
@@ -39,7 +38,7 @@ import reactor.core.publisher.Mono;
 @EnableWebFluxSecurity
 @EnableReactiveMethodSecurity
 public class SecurityConfig {
-//	private final ApplicationContext applicationContext;
+	//	private final ApplicationContext applicationContext;
 	private final JwtTokenProvider jwtTokenProvider;
 
 //	@Bean
@@ -68,39 +67,43 @@ public class SecurityConfig {
 //				.build();
 //	}
 
-    @Bean
-    SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
-		return http.exceptionHandling(
-		exceptionHandlingSpec -> exceptionHandlingSpec.authenticationEntryPoint((exchange, ex) -> {
-			return Mono.fromRunnable(() -> {
-				exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED);
-			});
-		}).accessDeniedHandler((exchange, denied) -> {
-			return Mono.fromRunnable(() -> {
-				exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN);
-			});
-		})).cors().disable().csrf().disable().formLogin().disable().httpBasic().disable()
+	@Bean
+	SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+		return http
+				.exceptionHandling(spec -> spec
+						.authenticationEntryPoint((exchange, ex) ->
+								Mono.fromRunnable(() ->
+										exchange.getResponse().setStatusCode(HttpStatus.UNAUTHORIZED)))
+						.accessDeniedHandler((exchange, denied) ->
+								Mono.fromRunnable(() ->
+										exchange.getResponse().setStatusCode(HttpStatus.FORBIDDEN))))
+				.csrf(ServerHttpSecurity.CsrfSpec::disable)
+				.cors(ServerHttpSecurity.CorsSpec::disable)
+				.formLogin(ServerHttpSecurity.FormLoginSpec::disable)
+				.httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
 //		.authenticationManager(reactiveAuthenticationManager)
-		.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
-		.authorizeExchange(exchange -> exchange.pathMatchers(HttpMethod.OPTIONS).permitAll()
-				.pathMatchers("/batch/login", "/batch/retoken", "/websocket").permitAll().anyExchange().authenticated())
-		.addFilterBefore((WebFilter) new JwtTokenAuthenticationFilter(jwtTokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
-		.build();
-    }
-    
-    @Bean
-    CorsConfigurationSource corsConfiguration() {
-        CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.applyPermitDefaultValues();
-        corsConfig.addAllowedMethod(HttpMethod.PUT);
-        corsConfig.addAllowedMethod(HttpMethod.DELETE);
-        corsConfig.setAllowedOrigins(Arrays.asList("*"));
+				.securityContextRepository(NoOpServerSecurityContextRepository.getInstance())
+				.authorizeExchange(spec -> spec
+						.pathMatchers(HttpMethod.OPTIONS).permitAll()
+						.pathMatchers("/batch/login", "/batch/retoken", "/websocket").permitAll()
+						.anyExchange().authenticated())
+				.addFilterBefore(new JwtTokenAuthenticationFilter(jwtTokenProvider), SecurityWebFiltersOrder.HTTP_BASIC)
+				.build();
+	}
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);
-        return source;
-    }
-    
+	@Bean
+	CorsConfigurationSource corsConfiguration() {
+		CorsConfiguration corsConfig = new CorsConfiguration();
+		corsConfig.applyPermitDefaultValues();
+		corsConfig.addAllowedMethod(HttpMethod.PUT);
+		corsConfig.addAllowedMethod(HttpMethod.DELETE);
+		corsConfig.setAllowedOrigins(Arrays.asList("*"));
+
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		source.registerCorsConfiguration("/**", corsConfig);
+		return source;
+	}
+
 	@Bean
 	PermissionEvaluator myPermissionEvaluator() {
 		return new PermissionEvaluator() {
@@ -115,7 +118,7 @@ public class SecurityConfig {
 
 			@Override
 			public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
-					Object permission) {
+										 Object permission) {
 				return false;
 			}
 		};
@@ -129,7 +132,7 @@ public class SecurityConfig {
 			if(usersEntity.isEmpty()) {
 				return Mono.empty();
 			}
-			
+
 			JwtUserInfo jwtInfo = new JwtUserInfo();
 			jwtInfo.setUsername(usersEntity.get().getName());
 			jwtInfo.setPassword(usersEntity.get().getPassword());
@@ -150,7 +153,7 @@ public class SecurityConfig {
 
 	@Bean
 	ReactiveAuthenticationManager reactiveAuthenticationManager(ReactiveUserDetailsService userDetailsService,
-			PasswordEncoder passwordEncoder) {
+																PasswordEncoder passwordEncoder) {
 		var authenticationManager = new UserDetailsRepositoryReactiveAuthenticationManager(userDetailsService);
 		authenticationManager.setPasswordEncoder(passwordEncoder);
 		return authenticationManager;

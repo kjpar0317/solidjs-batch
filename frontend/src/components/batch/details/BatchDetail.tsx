@@ -4,7 +4,7 @@ import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
 import { validator } from "@felte/validator-yup";
 import * as yup from "yup";
-import { forEach } from "lodash";
+import { forEach } from "lodash-es";
 import { createCodeMirror } from "solid-codemirror";
 import { keymap } from "@codemirror/view";
 import { indentWithTab } from "@codemirror/commands";
