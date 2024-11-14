@@ -21,7 +21,6 @@
     "@felte/validator-yup": "^1.1.4",
     "@fontsource/noto-sans-kr": "^5.1.0",
     "@solid-primitives/scheduled": "^1.4.4",
-    "@solid-primitives/websocket": "^1.2.2",
     "@solidjs/router": "^0.15.1",
     "@solidjs/start": "^1.0.10",
     "ag-grid-community": "^32.3.3",

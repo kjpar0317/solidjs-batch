@@ -23,5 +23,15 @@ export default defineConfig({
       ],
     },
   },
-  // 이 설정은 SolidStartInlineConfig에 존재하지 않습니다. Vite 설정 파일에서 optimizeDeps를 사용하세요.
+  server: {
+    experimental: {
+      websocket: true,
+    },
+  },
+}).addRouter({
+  name: "ws",
+  type: "http",
+  handler: "./src/ws.ts",
+  target: "server",
+  base: "/ws",
 });

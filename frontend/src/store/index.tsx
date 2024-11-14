@@ -4,7 +4,6 @@ import { createStore } from "solid-js/store";
 import createLayout from "./createLayout";
 import createAuth from "./createAuth";
 import createBatch from "./createBatch";
-import createWsSocket from "./createWsSocket";
 
 type ActionType = Record<any, any>;
 type ContextStoreType = Record<string, any>;
@@ -13,7 +12,7 @@ export type StoreType = ContextStoreType[];
 const StoreContext = createContext<StoreType>();
 
 export function Provider(props: { children: JSXElement }) {
-  let layout: any, auth: any, batch: any, websocket: any;
+  let layout: any, auth: any, batch: any;
 
   // const router = createRouteHandler("");
   const [state, setState] = createStore({
@@ -26,9 +25,6 @@ export function Provider(props: { children: JSXElement }) {
     get batch() {
       return batch;
     },
-    get websocket() {
-      return websocket;
-    },
   });
 
   const actions: ActionType = {};
@@ -38,7 +34,6 @@ export function Provider(props: { children: JSXElement }) {
   layout = createLayout(state, setState, actions);
   auth = createAuth(state, setState, actions);
   batch = createBatch(state, setState, actions);
-  websocket = createWsSocket(state, setState, actions);
 
   return (
     <StoreContext.Provider value={store}>
