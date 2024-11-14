@@ -1,4 +1,3 @@
-// @jsx solid-js
 import type { JSXElement } from "solid-js";
 import { createSignal, createEffect, Show } from "solid-js";
 
