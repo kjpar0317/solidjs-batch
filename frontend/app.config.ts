@@ -33,5 +33,5 @@ export default defineConfig({
   type: "http",
   handler: "./src/ws.ts",
   target: "server",
-  base: "/ws",
+  base: "/websocket",
 });

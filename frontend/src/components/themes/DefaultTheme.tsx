@@ -1,5 +1,5 @@
 import type { JSXElement } from "solid-js";
-import { Switch, Match } from "solid-js";
+import { Switch, Match, onMount } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 
 import { useStore } from "~/store";
@@ -14,14 +14,9 @@ export default function DefaultTheme(
   props: Readonly<DefaultThemeProps>
 ): JSXElement {
   const navigate = useNavigate();
-  const [store, { setIsLogined }] = useStore();
-  let isClient = false;
+  const [store, { setIsLogined, connect }] = useStore();
 
-  if (typeof window !== "undefined") {
-    isClient = true;
-  }
-
-  // onMount(() => store.websocket.connect());
+  onMount(() => connect());
 
   // onCleanup(() => store.websocket.disconnect());
 
