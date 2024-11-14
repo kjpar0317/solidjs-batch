@@ -1,7 +1,9 @@
 import { type JSXElement, Match, Switch } from "solid-js";
 import { ICellRendererParams } from "ag-grid-community";
 
-export default function LoadingSkeletonColumn(props: ICellRendererParams): JSXElement {
+export default function LoadingSkeletonColumn(
+  props: Readonly<ICellRendererParams>
+): JSXElement {
   return (
     <Switch>
       <Match when={props.data}>{props.value}</Match>

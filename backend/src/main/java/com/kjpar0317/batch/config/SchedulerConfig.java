@@ -19,9 +19,10 @@ public class SchedulerConfig  {
 	private final JobInfoService jobInfoService;
     
     @Bean
-    void startSchedule() {
+    int startSchedule() {
     	jobInfoService.getJobInfoList()
     		.filter(f -> "Y".equals(f.getUseYn()))
     		.subscribe(s -> service.addTaskToScheduler(s.getJobId(), () -> jobHandler.startJob(s), s.getJobCronExpression()));
+		return 0;
     }
 }

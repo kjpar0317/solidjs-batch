@@ -1,16 +1,22 @@
-import { createSignal } from "solid-js";
-import createWebsocket from "@solid-primitives/websocket";
+import { createStore } from "solid-js/store";
 
-export default function createWsSocket(state: any, setState: any, actions: any) {
-    const [data, setData] = createSignal<string>("");
-    const [connect, disconnect, send, socketState] = createWebsocket(
-      `ws://${window.location.hostname}:8080/websocket`,
-      (msg: MessageEvent) => setData(msg.data),
-      (msg: any) => setData(msg.error),
-      [],
-      5,
-      5000
-    );
-    
-    return { connect, disconnect, socketState };
+import {
+  createReconnectingWS,
+  createWSState,
+} from "@solid-primitives/websocket";
+
+export default function createWsSocket(
+  state: any,
+  setState: any,
+  actions: any
+) {
+  const [data, setData] = createStore<any>();
+  // const ws = createReconnectingWS(`ws://localhost:8080/websocket`);
+
+  const socketState = 0;
+  // const socketState = createWSState(ws);
+
+  // ws.addEventListener("message", (ev: MessageEvent) => setData(ev.data));
+
+  return { data, socketState };
 }

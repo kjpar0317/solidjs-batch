@@ -1,4 +1,4 @@
-import { createEffect, on, onMount } from "solid-js";
+import { onMount } from "solid-js";
 import * as echarts from "echarts";
 
 export function BarChart() {
@@ -17,7 +17,7 @@ export function BarChart() {
   onMount(() => {
     console.log(chartRef);
 
-    var myChart = echarts.init(chartRef);
+    let myChart = echarts.init(chartRef);
 
     // Draw the chart
     myChart.setOption({

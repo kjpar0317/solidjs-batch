@@ -1,4 +1,9 @@
-import axios, { AxiosInstance, AxiosResponse, AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosResponse,
+  AxiosError,
+  InternalAxiosRequestConfig,
+} from "axios";
 import toast from "solid-toast";
 
 // const AXIOS_TIMEOUT: number = 30 * 60 * 1000; // 30분
@@ -12,7 +17,11 @@ const axiosUtils: AxiosInstance = axios.create({
 
 async function responseValidate(error: any): Promise<any> {
   // API 서버 접속 오류
-  if (!error.response || error.response.status === 404 || error.response.status === 504) {
+  if (
+    !error.response ||
+    error.response.status === 404 ||
+    error.response.status === 504
+  ) {
     toast.error("API 서버 연결 오류");
     return !error.response ? 500 : error.response.status;
   }
@@ -58,9 +67,12 @@ axiosUtils.interceptors.response.use(
       const loginId: string | null = sessionStorage.getItem("loginId");
       const token: string | null = sessionStorage.getItem("token");
 
-      const res: AxiosResponse<any, any> = await axios.get(`/api/batch/retoken?loginId=${loginId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res: AxiosResponse<any, any> = await axios.get(
+        `/api/batch/retoken?loginId=${loginId}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       if (res.data && res.data.data && res.data.data.newToken) {
         sessionStorage.setItem("token", res.data.data.newToken);

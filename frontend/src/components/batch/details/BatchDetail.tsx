@@ -1,5 +1,5 @@
 import type { JSXElement } from "solid-js";
-import { createSignal, createEffect, onMount, on } from "solid-js";
+import { createSignal, createEffect } from "solid-js";
 import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
 import { validator } from "@felte/validator-yup";

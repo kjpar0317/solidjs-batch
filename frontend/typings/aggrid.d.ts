@@ -1,4 +1,4 @@
-import type { Column, ColDef, IRowNode, GridApi, ColumnApi } from "ag-grid-community";
+import type { Column, ColDef, IRowNode, GridApi } from "ag-grid-community";
 
 export type TData = any;
 export type TContext = any;
@@ -20,7 +20,7 @@ export interface GridReadyEvent<TData = any, TContext = any> {
   // The grid api.
   api: GridApi<TData>;
   // The column api.
-  columnApi: ColumnApi;
+  columnApi: GridApi;
   // Application context as set on `gridOptions.context`.
   context: TContext;
   // Event identifier
@@ -47,7 +47,7 @@ export interface CellClickedEvent<TData = any, TValue = any> {
   // The grid api.
   api: GridApi<TData>;
   // The column api.
-  columnApi: ColumnApi;
+  columnApi: GridApi;
   // Application context as set on `gridOptions.context`.
   // context: TContext;
   context: any;
@@ -63,7 +63,7 @@ export interface GridSizeChangedEvent<TData = any, TContext = any> {
   // The grid api.
   api: GridApi<TData>;
   // The column api.
-  columnApi: ColumnApi;
+  columnApi: GridApi;
   // Application context as set on `gridOptions.context`.
   context: TContext;
   // Event identifier
@@ -82,7 +82,7 @@ export interface PaginationChangedEvent<TData = any, TContext = any> {
   // The grid api.
   api: GridApi<TData>;
   // The column api.
-  columnApi: ColumnApi;
+  columnApi: GridApi;
   // Application context as set on `gridOptions.context`.
   context: TContext;
   // Event identifier
@@ -118,5 +118,7 @@ export interface GridPageInfo {
   itemInPage: number;
   filters?: FilterModelItem[];
   orderBy?: SortModelItem[];
-  successCallback?: ((rowsThisBlock: any[], lastRow?: number | undefined) => void) | undefined;
+  successCallback?:
+    | ((rowsThisBlock: any[], lastRow?: number | undefined) => void)
+    | undefined;
 }

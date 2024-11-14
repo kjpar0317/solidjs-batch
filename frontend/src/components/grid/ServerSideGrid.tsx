@@ -1,10 +1,29 @@
 import type { JSXElement, Accessor } from "solid-js";
 import type { GridSizeChangedEvent } from "ag-grid-community";
-import { createSignal, createEffect, createMemo, on, onCleanup } from "solid-js";
+import {
+  createSignal,
+  createEffect,
+  createMemo,
+  on,
+  onCleanup,
+} from "solid-js";
 import AgGridSolid from "ag-grid-solid";
-import { createScheduled, throttle, type Scheduled } from "@solid-primitives/scheduled";
+import {
+  createScheduled,
+  throttle,
+  type Scheduled,
+} from "@solid-primitives/scheduled";
 
-import type { GridReadyEvent, CellClickedEvent, PaginationChangedEvent, IGetRowsParams, IGridApi, IColDef, TContext, FilterModelItem } from "typings/aggrid";
+import type {
+  GridReadyEvent,
+  CellClickedEvent,
+  PaginationChangedEvent,
+  IGetRowsParams,
+  IGridApi,
+  IColDef,
+  TContext,
+  FilterModelItem,
+} from "typings/aggrid";
 import LoadingSkeletonColumn from "~/components/grid/LoadingSkeletonColumn";
 
 interface ServerSideGridProps {
@@ -22,10 +41,14 @@ interface ServerSideGridProps {
   onPageChanged?: (page: number, totPage: number) => void;
 }
 
-export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
+export default function ServerSideGrid(
+  props: Readonly<ServerSideGridProps>
+): JSXElement {
   const { rowHeight = 46 } = props;
   const [gridApi, setGridApi] = createSignal<IGridApi>();
-  const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
+  const [quickFilterModel, setQuickFilterModel] = createSignal<any>(
+    props.quickFilterModel
+  );
   const [inHeight, setInHeight] = createSignal<number>(0);
   const throttleGridSizeFit: Accessor<boolean> = createScheduled(
     (): Scheduled<[]> =>
@@ -37,7 +60,10 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   const defComponents: Accessor<any> = createMemo((): any => {
     if (props.skeleton) {
       if (props.components) {
-        return { ...props.components, LoadingSkeletonColumn: LoadingSkeletonColumn };
+        return {
+          ...props.components,
+          LoadingSkeletonColumn: LoadingSkeletonColumn,
+        };
       } else {
         return { LoadingSkeletonColumn: LoadingSkeletonColumn };
       }
@@ -87,7 +113,8 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
       },
     };
 
-    gridApi()?.setDatasource(dataSource);
+    // TODO: deprecated 됨
+    // gridApi()?.setDatasource(dataSource);
   }
 
   function handleGridReady(event: GridReadyEvent): void {
@@ -104,7 +131,11 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
     props.onGridClick && props.onGridClick(event);
   }
   function handleGridPageChanged(event: PaginationChangedEvent): void {
-    props.onPageChanged && props.onPageChanged(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
+    props.onPageChanged &&
+      props.onPageChanged(
+        event.api.paginationGetCurrentPage(),
+        event.api.paginationGetTotalPages()
+      );
     gridApi()?.hideOverlay();
   }
   function handleGridSizeChanged(event: GridSizeChangedEvent): void {
@@ -121,7 +152,10 @@ export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   // }
   function calcPageSize(clientHeight: number): number {
     // console.log(clientHeight);
-    const gridHeight: number = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
+    const gridHeight: number =
+      clientHeight -
+      rowHeight -
+      ((props.suppressPaginationPanel && 17) || rowHeight);
     // console.log(gridHeight);
     // console.log(gridHeight / rowHeight);
     const rowNum: number = Math.round(gridHeight / rowHeight) - 1;

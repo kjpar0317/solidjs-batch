@@ -1,6 +1,6 @@
 import type { JSXElement } from "solid-js";
 import { createEffect, batch } from "solid-js";
-import { useNavigate } from "solid-start";
+import { useNavigate } from "@solidjs/router";
 import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
 import { validator } from "@felte/validator-yup";

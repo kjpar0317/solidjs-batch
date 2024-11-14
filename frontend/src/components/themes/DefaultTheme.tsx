@@ -1,6 +1,6 @@
 import type { JSXElement } from "solid-js";
-import { onMount, onCleanup, createEffect, on, Switch, Match } from "solid-js";
-import { useNavigate } from "solid-start";
+import { Switch, Match } from "solid-js";
+import { useNavigate } from "@solidjs/router";
 
 import { useStore } from "~/store";
 import Login from "~/routes/login";
@@ -10,31 +10,34 @@ interface DefaultThemeProps {
   children: JSXElement;
 }
 
-export default function DefaultTheme(props: DefaultThemeProps): JSXElement {
+export default function DefaultTheme(
+  props: Readonly<DefaultThemeProps>
+): JSXElement {
   const navigate = useNavigate();
   const [store, { setIsLogined }] = useStore();
 
-  onMount(() => store.websocket.connect());
+  // onMount(() => store.websocket.connect());
 
-  onCleanup(() => store.websocket.disconnect());
+  // onCleanup(() => store.websocket.disconnect());
 
-  createEffect(
-    on(
-      store.websocket?.socketState,
-      (ws: any) => {
-        if (ws === 3) {
-          store.websocket.disconnect();
-          console.log("websocket reconnect");
-          store.websocket.connect();
-        }
-      },
-      { defer: true }
-    )
-  );
+  // createEffect(
+  //   on(
+  //     store.websocket?.socketState,
+  //     (ws: any) => {
+  //       if (ws === 3) {
+  //         store.websocket.disconnect();
+  //         console.log("websocket reconnect");
+  //         store.websocket.connect();
+  //       }
+  //     },
+  //     { defer: true }
+  //   )
+  // );
 
   function isAuthenticated() {
-    const accessToken =
-      typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
+    // const accessToken =
+    //   typeof window !== "undefined" ? sessionStorage.getItem("token") : null;
+    const accessToken = sessionStorage.getItem("token");
 
     if (accessToken) {
       setIsLogined(true);

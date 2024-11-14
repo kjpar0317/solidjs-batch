@@ -1,5 +1,5 @@
 import type { JSXElement } from "solid-js";
-import { A } from "solid-start";
+import { A } from "@solidjs/router";
 import Counter from "~/components/Counter";
 import DefaultTheme from "~/components/themes/DefaultTheme";
 

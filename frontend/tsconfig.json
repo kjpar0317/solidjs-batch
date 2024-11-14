@@ -8,14 +8,12 @@
     "jsxImportSource": "solid-js",
     "jsx": "preserve",
     "strict": true,
-    "types": ["solid-start/env"],
+    "forceConsistentCasingInFileNames": true,
+    "types": ["vinxi/types/client"],
     "baseUrl": "./",
     "paths": {
       "~/*": ["./src/*"]
     }
   },
-  "typeRoots": [
-    "./node_modules/@types",
-    "./typings"
-  ],
+  "typeRoots": ["./node_modules/@types", "./typings"]
 }
