@@ -14,7 +14,7 @@ interface ModalProps {
   onClose?: () => void;
 }
 
-export default function Modal(props: ModalProps): JSXElement {
+export default function Modal(props: Readonly<ModalProps>): JSXElement {
   const { title, open = false, dismissActionArea = false } = props;
   const [isVisible, setVisibility] = createSignal<boolean>(props.open);
 
