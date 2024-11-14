@@ -1,6 +1,6 @@
 import type { JSXElement } from "solid-js";
 import { createSignal, createMemo, onMount } from "solid-js";
-import AgGridSolid from "ag-grid-solid";
+import AgGridSolid from "solid-ag-grid";
 
 import type { IGridApi } from "typings/aggrid";
 import { useStore } from "~/store";

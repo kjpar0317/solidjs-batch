@@ -7,7 +7,7 @@ import {
   on,
   onCleanup,
 } from "solid-js";
-import AgGridSolid from "ag-grid-solid";
+import AgGridSolid from "solid-ag-grid";
 import {
   createScheduled,
   throttle,
