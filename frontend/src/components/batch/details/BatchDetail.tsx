@@ -2,8 +2,8 @@ import type { JSXElement } from "solid-js";
 import { createSignal, createEffect } from "solid-js";
 import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
-import { validator } from "@felte/validator-yup";
-import * as yup from "yup";
+import { validator } from "@felte/validator-zod";
+import { z } from "zod";
 import { forEach } from "lodash-es";
 import { createCodeMirror } from "solid-codemirror";
 import { keymap } from "@codemirror/view";
@@ -13,23 +13,18 @@ import { json } from "@codemirror/lang-json";
 import { INIT_JOB_INFO } from "~/constants";
 import { useStore } from "~/store";
 
-yup.setLocale({
-  mixed: {
-    default: "Not valid",
-    required: "Must not be empty",
-  },
-});
-
-const schema = yup.object({
-  jobId: yup.string().required(),
-  jobName: yup.string().required(),
-  jobCronExpression: yup.string().required(),
+const schema = z.object({
+  jobId: z.string().nonempty({ message: "Must not be empty" }),
+  jobName: z.string().nonempty({ message: "Must not be empty" }),
+  jobCronExpression: z.string().nonempty({ message: "Must not be empty" }),
 });
 
 interface BatchDetailProps extends JobInfo {
   onChange?: () => void;
 }
-export default function BatchDetail(props: BatchDetailProps): JSXElement {
+export default function BatchDetail(
+  props: Readonly<BatchDetailProps>
+): JSXElement {
   const [_, { saveBatch, deleteBatch }] = useStore();
   const [cloneProps] = createSignal<BatchDetailProps>(props);
   const [jsonTxt, setJsonTxt] = createSignal<string>("");

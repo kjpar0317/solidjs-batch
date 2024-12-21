@@ -3,25 +3,13 @@ import { createEffect, batch } from "solid-js";
 import { useNavigate } from "@solidjs/router";
 import { createForm } from "@felte/solid";
 import reporter from "@felte/reporter-tippy";
-import { validator } from "@felte/validator-yup";
-import * as yup from "yup";
+import { validator } from "@felte/validator-zod";
+import { z } from "zod";
 import { useStore } from "~/store";
 
-// Setting validation messages
-yup.setLocale({
-  mixed: {
-    default: "Not valid",
-    required: "Must not be empty",
-  },
-  string: {
-    email: "Must be a valid email",
-    min: "Must not be empty",
-  },
-});
-
-const schema = yup.object({
-  id: yup.string().required(),
-  password: yup.string().required(),
+const schema = z.object({
+  id: z.string().nonempty({ message: "Must not be empty" }),
+  password: z.string().nonempty({ message: "Must not be empty" }),
 });
 
 export default function Login(): JSXElement {

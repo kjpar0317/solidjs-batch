@@ -8,36 +8,36 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.4",
-    "@types/lodash": "^4.17.13",
+    "@types/lodash-es": "^4.17.12",
     "postcss": "^8.4.49",
-    "tailwindcss": "^3.4.14",
-    "typescript": "^5.6.3"
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "@codemirror/commands": "^6.7.1",
     "@codemirror/lang-json": "^6.0.1",
     "@felte/reporter-tippy": "^1.1.10",
     "@felte/solid": "^1.2.14",
-    "@felte/validator-yup": "^1.1.4",
+    "@felte/validator-zod": "^1.0.18",
     "@fontsource/noto-sans-kr": "^5.1.0",
     "@solid-primitives/scheduled": "^1.4.4",
-    "@solidjs/router": "^0.15.1",
+    "@solidjs/router": "^0.15.2",
     "@solidjs/start": "^1.0.10",
-    "ag-grid-community": "^32.3.3",
+    "ag-grid-community": "^31.1.1",
     "autoprefixer": "^10.4.20",
-    "axios": "^1.7.7",
-    "daisyui": "^4.12.14",
+    "axios": "^1.7.9",
+    "daisyui": "^4.12.22",
     "echarts": "^5.5.1",
     "lodash-es": "^4.17.21",
-    "solid-ag-grid": "^0.0.100",
+    "solid-ag-grid": "^0.0.210",
     "solid-codemirror": "^2.3.1",
     "solid-gridstack": "^0.0.4",
     "solid-js": "^1.9.3",
     "solid-toast": "^0.5.0",
     "typeface-nanum-square-round": "^1.0.2",
-    "undici": "^6.21.0",
-    "vinxi": "^0.4.3",
-    "yup": "^1.4.0"
+    "undici": "^7.2.0",
+    "vinxi": "^0.5.1",
+    "zod": "^3.24.1"
   },
   "engines": {
     "node": ">=18"

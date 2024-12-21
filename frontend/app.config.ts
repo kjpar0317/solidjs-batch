@@ -28,10 +28,11 @@ export default defineConfig({
       websocket: true,
     },
   },
-}).addRouter({
-  name: "ws",
-  type: "http",
-  handler: "./src/ws.ts",
-  target: "server",
-  base: "/websocket",
 });
+// .addRouter({
+//   name: "ws",
+//   type: "http",
+//   handler: "./src/ws.ts",
+//   target: "server",
+//   base: "/websocket",
+// });
