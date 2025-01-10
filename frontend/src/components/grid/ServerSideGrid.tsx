@@ -1,37 +1,17 @@
 import type { JSXElement, Accessor } from "solid-js";
-import type {
-  GridReadyEvent,
-  CellClickedEvent,
-  IGetRowsParams,
-  GridApi,
-  ColDef,
-  ColGroupDef,
-  GridSizeChangedEvent,
-  IDatasource,
-  PaginationChangedEvent,
-} from "ag-grid-community";
-import type { TData, TContext, FilterModelItem } from "typings/aggrid";
+import type { IGetRowsParams, GridApi, IDatasource } from "ag-grid-community";
+import type { TContext, TColDef, TGridReadyEvent, TFirstDataRenderedEvent, TCellClickedEvent, TPaginationChangedEvent, TGridSizeChangedEvent, FilterModelItem } from "typings/aggrid";
 
-import {
-  createSignal,
-  createEffect,
-  createMemo,
-  on,
-  onCleanup,
-} from "solid-js";
+import { createSignal, createEffect, createMemo, on, onCleanup } from "solid-js";
 import AgGridSolid from "solid-ag-grid";
-import {
-  createScheduled,
-  throttle,
-  type Scheduled,
-} from "@solid-primitives/scheduled";
+import { createScheduled, throttle, type Scheduled } from "@solid-primitives/scheduled";
 
 import LoadingSkeletonColumn from "~/components/grid/LoadingSkeletonColumn";
 
 interface ServerSideGridProps {
   components?: TContext;
-  columnDefs: ColDef<TData>[] | ColGroupDef<TData>[];
-  defaultColDef: ColDef<TData>;
+  columnDefs: TColDef[];
+  defaultColDef: TColDef;
   rowHeight?: number;
   suppressPaginationPanel?: boolean;
   suppressMultiSort?: boolean;
@@ -39,34 +19,33 @@ interface ServerSideGridProps {
   quickFilterModel?: FilterModelItem;
   skeleton?: boolean;
   onMutate: (params: IGetRowsParams) => void;
-  onGridReady?: (event: GridReadyEvent) => void;
-  onGridClick?: (event: CellClickedEvent) => void;
+  onGridReady?: (event: TGridReadyEvent) => void;
+  onGridClick?: (event: TCellClickedEvent) => void;
   onPageChanged?: (page: number, totPage: number) => void;
 }
 
-export default function ServerSideGrid(
-  props: Readonly<ServerSideGridProps>
-): JSXElement {
+export default function ServerSideGrid(props: ServerSideGridProps): JSXElement {
   const { suppressHorizontalScroll = true, rowHeight = 46 } = props;
   const [gridApi, setGridApi] = createSignal<GridApi>();
-  const [quickFilterModel, setQuickFilterModel] = createSignal<any>(
-    props.quickFilterModel
-  );
+  const [quickFilterModel, setQuickFilterModel] = createSignal<any>(props.quickFilterModel);
   const [inHeight, setInHeight] = createSignal<number>(0);
+  const [isLock, setIsLock] = createSignal<boolean>(false);
   const throttleGridSizeFit: Accessor<boolean> = createScheduled(
     (): Scheduled<[]> =>
       throttle((): void | undefined => {
-        updateGridData();
-        gridApi()?.sizeColumnsToFit();
+        if(!isLock()) {
+          updateGridData();
+          gridApi()?.sizeColumnsToFit();
+
+          setIsLock(false);
+        }
+        gridApi()?.setGridOption('cacheBlockSize', cacheBlockSize());
       }, 500)
   );
-  const defComponents: Accessor<any> = createMemo((): any => {
+  const defComponents: Accessor<TColDef> = createMemo((): TColDef => {
     if (props.skeleton) {
       if (props.components) {
-        return {
-          ...props.components,
-          LoadingSkeletonColumn: LoadingSkeletonColumn,
-        };
+        return { ...props.components, LoadingSkeletonColumn: LoadingSkeletonColumn };
       } else {
         return { LoadingSkeletonColumn: LoadingSkeletonColumn };
       }
@@ -74,16 +53,14 @@ export default function ServerSideGrid(
       return props.components;
     }
   });
-  const defColDef: Accessor<ColDef> = createMemo((): ColDef => {
+  const defColDef: Accessor<TColDef> = createMemo((): TColDef => {
     if (props.skeleton) {
       return { ...props.defaultColDef, cellRenderer: LoadingSkeletonColumn };
     } else {
       return props.defaultColDef;
     }
   });
-  const cacheBlockSize: Accessor<number> = createMemo(
-    (): number => (inHeight() > 0 && calcPageSize(inHeight())) || 0
-  );
+  const cacheBlockSize: Accessor<number> = createMemo((): number => (inHeight() > 0 && calcPageSize(inHeight())) || 0);
 
   createEffect(
     on(inHeight, (next: number, prev: number | undefined): void => {
@@ -100,7 +77,9 @@ export default function ServerSideGrid(
   });
 
   onCleanup((): void => {
-    // gridApi()?.destroy();
+    if(!gridApi()?.isDestroyed()) {
+      gridApi()?.destroy();
+    }
   });
 
   function updateGridData(): void {
@@ -114,44 +93,36 @@ export default function ServerSideGrid(
           }
 
           props.onMutate(params);
-        }, 0);
-      },
+        }, 100);
+      }
     };
 
-    gridApi()?.setGridOption("datasource", dataSource);
+    gridApi()?.setGridOption('datasource', dataSource);
   }
 
-  function handleGridReady(event: GridReadyEvent<TData>): void {
+  function handleGridReady(event: TGridReadyEvent | any): void {
     setGridApi(event.api);
-    // setPageSizeChange(event.api);
-
+    props.onGridReady?.(event);
+  }
+  function handleFirstRendererd(event: TFirstDataRenderedEvent) {
     updateGridData();
-
     event.api.sizeColumnsToFit();
-
-    props.onGridReady && props.onGridReady(event);
   }
-  function handleGridClick(event: CellClickedEvent<TData>): void {
-    props.onGridClick && props.onGridClick(event);
-  }
-  function handleGridPageChanged(event: PaginationChangedEvent<TData>): void {
-    props.onPageChanged &&
-      props.onPageChanged(
-        event.api.paginationGetCurrentPage(),
-        event.api.paginationGetTotalPages()
-      );
+  function handleGridClick(event: TCellClickedEvent): void {
+    setIsLock(true);
 
-    if (event.api.paginationGetCurrentPage() > 0) {
-      gridApi()?.setGridOption("cacheBlockSize", cacheBlockSize());
-    }
+    props.onGridClick?.(event);
+  }
+  function handleGridPageChanged(event: TPaginationChangedEvent): void {
+    props.onPageChanged?.(event.api.paginationGetCurrentPage(), event.api.paginationGetTotalPages());
+
     gridApi()?.hideOverlay();
   }
-  function handleGridSizeChanged(event: GridSizeChangedEvent<TData>): void {
+  function handleGridSizeChanged(event: TGridSizeChangedEvent): void {
     const pageSize: number = calcPageSize(event.clientHeight);
     setInHeight(event.clientHeight);
 
-    gridApi()?.setGridOption("cacheBlockSize", cacheBlockSize());
-    gridApi()?.setGridOption("paginationPageSize", pageSize);
+    event.api.setGridOption('paginationPageSize', pageSize);
 
     throttleGridSizeFit();
   }
@@ -165,9 +136,7 @@ export default function ServerSideGrid(
   function calcPageSize(clientHeight: number): number {
     // console.log(`clientHeight : ${clientHeight}, rowHeight: ${rowHeight}`);
     // const gridHeight: number = clientHeight - rowHeight - ((props.suppressPaginationPanel && 17) || rowHeight);
-    const gridHeight: number = props.suppressPaginationPanel
-      ? clientHeight - rowHeight
-      : clientHeight - rowHeight - 48;
+    const gridHeight: number = props.suppressPaginationPanel ? clientHeight - rowHeight : clientHeight - rowHeight - 48;
     // console.log(`gridHeight : ${gridHeight}`);
     // console.log(gridHeight / rowHeight);
     const rowNum: number = Math.trunc(gridHeight / rowHeight);
@@ -197,6 +166,7 @@ export default function ServerSideGrid(
       onCellClicked={handleGridClick}
       onPaginationChanged={handleGridPageChanged}
       onGridSizeChanged={handleGridSizeChanged}
+      onFirstDataRendered={handleFirstRendererd}
     />
   );
 }
